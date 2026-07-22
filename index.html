@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>プログラミング3（Java）期末試験 完全対策集</title>
+  <style>
+    :root {
+      --navy: #102a56;
+      --blue: #155fd1;
+      --blue-soft: #edf4ff;
+      --coral: #e54842;
+      --coral-soft: #fff1ef;
+      --green: #18864b;
+      --green-soft: #edfaf2;
+      --ink: #17243a;
+      --muted: #5f6f86;
+      --line: #d7dfeb;
+      --surface: #f7f9fc;
+      --code: #101b2d;
+      --shadow: 0 10px 30px rgba(15, 42, 86, .08);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 20px; overflow-x: clip; }
+    body {
+      margin: 0;
+      overflow-x: clip;
+      color: var(--ink);
+      background: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+      line-height: 1.75;
+    }
+    button, input { font: inherit; }
+    a { color: inherit; }
+    .app { display: grid; grid-template-columns: 292px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; overflow-y: auto;
+      padding: 24px 20px; border-right: 1px solid var(--line); background: #fbfcfe;
+    }
+    .brand { font-weight: 900; color: var(--navy); font-size: 19px; letter-spacing: .01em; }
+    .brand small { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 600; }
+    .progress-box { margin: 22px 0; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    .progress-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; }
+    .progress-track { height: 7px; margin-top: 10px; overflow: hidden; border-radius: 99px; background: #e7ebf2; }
+    .progress-fill { width: 0; height: 100%; background: var(--blue); transition: width .25s ease; }
+    nav a { display: block; margin: 3px 0; padding: 8px 10px; border-radius: 8px; text-decoration: none; color: #35455e; font-size: 13px; font-weight: 700; }
+    nav a:hover, nav a.active { color: var(--blue); background: var(--blue-soft); }
+    nav .group { margin-top: 14px; color: var(--navy); font-size: 11px; font-weight: 900; letter-spacing: .08em; }
+    .search { width: 100%; margin: 4px 0 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink); }
+    .mobile-nav-toggle { display: none; width: 100%; margin: 0 0 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; color: var(--navy); background: #fff; font-weight: 900; text-align: left; }
+    .side-note { margin-top: 18px; padding: 13px; border-left: 3px solid var(--coral); background: var(--coral-soft); font-size: 12px; }
+    main { min-width: 0; padding: 46px clamp(28px, 5vw, 76px) 100px; }
+    .content { max-width: 1160px; margin: 0 auto; }
+    .hero { padding-bottom: 30px; border-bottom: 1px solid var(--line); }
+    h1 { max-width: 880px; margin: 0; color: var(--navy); font-size: clamp(34px, 4.8vw, 62px); line-height: 1.08; letter-spacing: -.035em; }
+    .lead { max-width: 850px; margin: 20px 0 0; color: var(--muted); font-size: 17px; }
+    .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 30px 0 0; }
+    .fact { min-height: 110px; padding: 17px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow); }
+    .fact b { display: block; margin-top: 5px; color: var(--navy); font-size: 20px; line-height: 1.35; }
+    .fact small { color: var(--muted); font-weight: 800; }
+    .fact.danger { border-top: 4px solid var(--coral); }
+    .fact.danger b { color: var(--coral); }
+    section { margin-top: 62px; }
+    h2 { margin: 0 0 18px; padding-bottom: 12px; border-bottom: 2px solid var(--navy); color: var(--navy); font-size: 30px; line-height: 1.3; }
+    h3 { margin: 34px 0 12px; color: var(--navy); font-size: 21px; line-height: 1.45; }
+    h4 { margin: 24px 0 8px; color: #263c60; font-size: 16px; }
+    p { margin: 10px 0; }
+    .section-intro { max-width: 900px; color: var(--muted); }
+    .callout { margin: 18px 0; padding: 18px 20px; border-left: 4px solid var(--blue); background: var(--blue-soft); border-radius: 0 var(--radius) var(--radius) 0; }
+    .callout.danger { border-color: var(--coral); background: var(--coral-soft); }
+    .callout.success { border-color: var(--green); background: var(--green-soft); }
+    .source { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; counter-reset: road; }
+    .road { position: relative; padding: 18px 16px 18px 50px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    .road::before { counter-increment: road; content: counter(road); position: absolute; left: 15px; top: 18px; width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: var(--blue); font-weight: 900; }
+    .road:first-child { border-color: #f29b97; background: #fffafa; }
+    .road:first-child::before { background: var(--coral); }
+    .road b { display: block; color: var(--navy); }
+    .road small { color: var(--muted); }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card { padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    .card h3, .card h4 { margin-top: 0; }
+    .tag { display: inline-block; margin-right: 6px; padding: 2px 8px; border: 1px solid #b9cff3; border-radius: 999px; color: var(--blue); background: var(--blue-soft); font-size: 11px; font-weight: 900; }
+    .tag.red { border-color: #f4b4b0; color: #b92d29; background: var(--coral-soft); }
+    .tag.green { border-color: #acd9bf; color: var(--green); background: var(--green-soft); }
+    ul, ol { padding-left: 1.35em; }
+    li + li { margin-top: 5px; }
+    table { width: 100%; margin: 14px 0; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 11px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--navy); background: var(--surface); font-weight: 900; }
+    code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+    :not(pre) > code { padding: 2px 5px; border-radius: 5px; color: #a52a2a; background: #f4f6f9; font-size: .92em; }
+    .code-wrap { position: relative; margin: 14px 0; overflow: hidden; border: 1px solid #263a5c; border-radius: var(--radius); background: var(--code); }
+    .code-title { display: flex; justify-content: space-between; gap: 10px; padding: 8px 13px; border-bottom: 1px solid #2b3d5b; color: #bdc9db; background: #15243a; font-size: 12px; font-weight: 800; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: #e6edf7; line-height: 1.62; font-size: 13px; tab-size: 2; }
+    .kw { color: #ff8bd4; } .type { color: #8ecbff; } .str { color: #9fe2a9; } .cm { color: #8290a6; } .num { color: #ffd38a; }
+    .blank { display: inline-block; min-width: 90px; padding: 0 7px; border: 1px dashed #ffb26e; border-radius: 4px; color: #ffca95; background: #4a301c; text-align: center; }
+    details { margin: 12px 0; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    summary { cursor: pointer; padding: 13px 16px; color: var(--blue); font-weight: 900; }
+    details > div { padding: 0 16px 16px; }
+    .question { margin: 22px 0; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; box-shadow: 0 5px 18px rgba(15,42,86,.05); }
+    .qhead { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 10px; }
+    .qhead b { color: var(--navy); font-size: 17px; }
+    .points { color: var(--muted); font-size: 12px; font-weight: 900; }
+    .checkline { display: flex; gap: 10px; align-items: flex-start; margin: 9px 0; padding: 9px 10px; border-radius: 8px; background: var(--surface); }
+    .checkline input { margin-top: 6px; accent-color: var(--green); }
+    .exam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .answer-key { border-left: 4px solid var(--green); background: var(--green-soft); }
+    .term { display: grid; grid-template-columns: 170px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .term b { color: var(--navy); }
+    .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 15px 0; }
+    .flow span { padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-weight: 800; }
+    .flow i { color: var(--blue); font-style: normal; font-weight: 900; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+    .btn { padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--navy); background: #fff; cursor: pointer; font-weight: 800; }
+    .btn:hover { border-color: var(--blue); color: var(--blue); }
+    .hidden-by-search { display: none !important; }
+    footer { margin-top: 70px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      nav { columns: 2; } nav .group { break-after: avoid; }
+      .facts, .roadmap { grid-template-columns: repeat(2, 1fr); }
+      main { padding: 34px 22px 80px; }
+    }
+    @media (max-width: 680px) {
+      .sidebar { padding: 16px 20px; }
+      .progress-box { margin: 14px 0; }
+      .mobile-nav-toggle { display: block; }
+      nav { display: none; columns: 1; max-height: 48vh; overflow-y: auto; padding: 4px 0 10px; }
+      nav.open { display: block; }
+      .side-note { display: none; }
+      .facts, .roadmap, .grid-2, .grid-3, .exam-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 38px; }
+      h2 { font-size: 25px; }
+      .term { grid-template-columns: 1fr; gap: 2px; }
+      table { display: table; width: 100%; max-width: 100%; table-layout: fixed; white-space: normal; }
+      th, td { padding: 9px 8px; overflow-wrap: anywhere; word-break: break-word; }
+      td code, th code { word-break: break-all; }
+      .code-wrap { max-width: 100%; }
+    }
+    @media print {
+      .app { display: block; }
+      .sidebar, .toolbar { display: none !important; }
+      main { padding: 0; }
+      .content { max-width: none; }
+      section { break-before: page; margin-top: 0; padding-top: 14mm; }
+      .hero { break-after: page; }
+      .question, .card, .code-wrap, details { break-inside: avoid; box-shadow: none; }
+      details > div { display: block !important; }
+      a { text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">Programming 3 <small>Java Final Exam Guide / 2026</small></div>
+    <div class="progress-box">
+      <div class="progress-row"><span>学習チェック</span><span id="progressText">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <input class="search" id="search" type="search" placeholder="本文を検索（例: Socket）" aria-label="本文を検索">
+    <button class="mobile-nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="chapterNav">目次を開く</button>
+    <nav id="chapterNav">
+      <div class="group">START</div>
+      <a href="#overview">0. 試験の確定情報</a>
+      <a href="#strategy">1. 得点戦略</a>
+      <a href="#master">2. 最重要テンプレート</a>
+      <div class="group">COURSE</div>
+      <a href="#java">3. Java基礎（Lesson 01）</a>
+      <a href="#swing">4. Swing（Lesson 02-04）</a>
+      <a href="#javafx">5. JavaFX（Lesson 05-07）</a>
+      <a href="#file">6. File / Regex（Lesson 08）</a>
+      <a href="#thread">7. Thread（Lesson 09）</a>
+      <a href="#network">8. Network（Lesson 10-11）</a>
+      <a href="#web">9. Servlet / JSP（Lesson 12-13）</a>
+      <div class="group">PRACTICE</div>
+      <a href="#predicted">10. 予想穴埋め問題</a>
+      <a href="#mock">11. 60分模擬試験</a>
+      <a href="#last">12. 直前チェック</a>
+    </nav>
+    <div class="side-note"><b>この一冊の使い方</b><br>解答を隠したまま紙にコードを書く → 解答を開く → 1文字単位で照合。参照不可なので「読める」ではなく「書ける」まで。</div>
+  </aside>
+
+  <main><div class="content">
+    <header class="hero" id="overview" data-search>
+      <h1>プログラミング3<br>期末試験 完全対策</h1>
+      <p class="lead">14本の講義PDFと、試験説明を写した4枚の画像を突き合わせて作成。用語の暗記だけでなく、資料中のコードを見た瞬間に「次の1行」が書ける状態を目標にする。</p>
+      <div class="facts">
+        <div class="fact"><small>試験日時</small><b>2026/7/24（金）<br>60分</b></div>
+        <div class="fact"><small>形式</small><b>対面・参照不可</b></div>
+        <div class="fact danger"><small>画像から確定</small><b>コード穴埋め</b></div>
+        <div class="fact"><small>公式の復習対象</small><b>講義資料・Program例・課題</b></div>
+      </div>
+      <div class="callout danger">
+        <b>画像4枚から読み取れる出題像</b>
+        <ul>
+          <li>指定プログラムの空白へ必要なコードを記入する。空欄は「1行内に1式」「1～2行」「複数行」の3タイプ。</li>
+          <li>与えられたコード、サンプルGUIウィンドウ、指示文、重要語を確認するよう明示されている。</li>
+          <li>例示問題はJavaFXの<code>HelloTest extends Application</code>。<code>TextField</code>でEnterを押し、<code>CheckBox</code>の選択状態で Mr./Ms. を切り替える。</li>
+          <li>体験談画像では「資料に載っているコードの穴埋めが多い」「Webのクライアント／サーバーのコードも出た」とある。これは過去の記憶であり確定情報ではないが、優先度を上げる根拠になる。</li>
+        </ul>
+        <div class="source">根拠: 授業写真 S__77520901/03/04、メッセージ画像、Lesson 14 p.79</div>
+      </div>
+      <div class="toolbar"><button class="btn" onclick="window.print()">印刷 / PDF保存</button><button class="btn" id="expandAll">すべての解答を開く</button><button class="btn" id="resetProgress">チェックをリセット</button></div>
+    </header>
+
+    <section id="strategy" data-search>
+      <h2>1. 得点戦略：何から覚えるか</h2>
+      <p class="section-intro">試験は60分。長い説明を書くより、クラス名・メソッド名・オブジェクトの接続順を正確に再現する力が効く。以下の順で仕上げる。</p>
+      <div class="roadmap">
+        <div class="road"><b>穴埋めの型</b><small>宣言 → 生成 → 登録 → 配置 → 表示</small></div>
+        <div class="road"><b>JavaFX GUI</b><small>Stage / Scene / Pane / EventHandler</small></div>
+        <div class="road"><b>Client / Server</b><small>Socket / Stream / accept / readLine</small></div>
+        <div class="road"><b>File・Thread・Web</b><small>定番テンプレートを手書き</small></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h3>空欄の前後から型を決める</h3><ul><li><code>new ____</code> → クラス名／コンストラクタ</li><li><code>obj.____(...)</code> → メソッド名</li><li><code>____ &lt;Type&gt;</code> → <code>implements EventHandler</code>等</li><li><code>if (____)</code> → <code>isSelected()</code>や文字列比較</li><li><code>setOnAction(____)</code> → ハンドラのインスタンス</li></ul></div>
+        <div class="card"><h3>1問ごとの確認順</h3><ol><li>ウィンドウの見た目から使う部品とレイアウトを特定</li><li>イベント源（Button / TextField / Mouse等）を特定</li><li>イベント型（ActionEvent / KeyEvent等）を特定</li><li>変化する部品（Label等）を特定</li><li>空欄へ最小限の式・行だけを書く</li></ol></div>
+      </div>
+    </section>
+
+    <section id="master" data-search>
+      <h2>2. 最重要テンプレート早見表</h2>
+      <p class="section-intro">ここだけは、順番ごと暗記する。穴埋めでは「似た名前」を混ぜないこと。</p>
+      <table>
+        <thead><tr><th>場面</th><th>絶対に出てくる骨格</th><th>混同注意</th></tr></thead>
+        <tbody>
+          <tr><td>JavaFX開始</td><td><code>extends Application</code> → <code>start(Stage stage)</code> → <code>new Scene(root,...)</code> → <code>stage.setScene(scene)</code> → <code>stage.show()</code></td><td>Stageが最上位、SceneのrootがPane</td></tr>
+          <tr><td>JavaFXイベント</td><td><code>node.setOnAction(new Handler())</code> / <code>implements EventHandler&lt;ActionEvent&gt;</code> / <code>handle(ActionEvent e)</code></td><td>Swingは<code>addActionListener</code>と<code>actionPerformed</code></td></tr>
+          <tr><td>ファイル入力</td><td><code>new BufferedReader(new FileReader(file))</code> → <code>readLine()</code> → <code>close()</code></td><td>入力はReader、出力はWriter</td></tr>
+          <tr><td>スレッド</td><td><code>implements Runnable</code> → <code>run()</code> → <code>new Thread(task)</code> → <code>start()</code></td><td><code>start()</code>が新スレッドを作り<code>run()</code>を呼ぶ</td></tr>
+          <tr><td>TCPサーバー</td><td><code>new ServerSocket(port)</code> → <code>accept()</code> → 通信用<code>Socket</code> → streams</td><td>ServerSocketは待受、Socketはデータ交換</td></tr>
+          <tr><td>TCPクライアント</td><td><code>new Socket(addr, port)</code> → streams → <code>out.println</code> / <code>in.readLine</code></td><td><code>PrintWriter(..., true)</code>はauto-flush</td></tr>
+          <tr><td>Servlet</td><td><code>extends HttpServlet</code> → <code>doGet(req,res)</code> → <code>req.getParameter</code> → <code>res.getWriter</code></td><td>HTTPはrequest / response</td></tr>
+          <tr><td>JSP</td><td><code>&lt;% ... %&gt;</code>、<code>&lt;%= ... %&gt;</code>、<code>&lt;%! ... %&gt;</code>、<code>&lt;%@ ... %&gt;</code></td><td>式<code>&lt;%=</code>には文末セミコロン不要</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="java" data-search>
+      <h2>3. Java基礎（Lesson 01）</h2>
+      <div class="grid-3">
+        <div class="card"><h3>static と instance</h3><p><code>static</code>はクラスに1つ。インスタンスメンバは各オブジェクトに属する。静的メソッドからインスタンスメンバへ直接アクセスできない。</p></div>
+        <div class="card"><h3>overload / override</h3><p><b>overload</b>: 同名・異なる引数。<b>override</b>: 継承先で同じシグネチャを再定義し、<code>@Override</code>を付ける。</p></div>
+        <div class="card"><h3>abstract / interface</h3><p>抽象クラスは<code>extends</code>、インタフェースは<code>implements</code>。抽象メソッドを持つ具象クラスは実装が必要。</p></div>
+      </div>
+      <div class="code-wrap"><div class="code-title"><span>クラス構造の基本</span><span>Lesson 01 / Lesson 14 p.5</span></div><pre><span class="kw">class</span> <span class="type">Vector3</span> <span class="kw">extends</span> <span class="type">Vector2</span> {
+  <span class="kw">static int</span> count;        <span class="cm">// クラスフィールド</span>
+  <span class="kw">private double</span> z;        <span class="cm">// インスタンスフィールド</span>
+
+  <span class="type">Vector3</span>(<span class="kw">double</span> x, <span class="kw">double</span> y) {
+    <span class="kw">this</span>(x, y, <span class="num">0</span>);      <span class="cm">// 同じクラスの別コンストラクタ</span>
+  }
+  <span class="type">Vector3</span>(<span class="kw">double</span> x, <span class="kw">double</span> y, <span class="kw">double</span> z) {
+    <span class="kw">super</span>(x, y);          <span class="cm">// 親コンストラクタ</span>
+    <span class="kw">this</span>.z = z;
+  }
+  <span class="kw">@Override public</span> <span class="type">String</span> toString() { <span class="kw">return</span> <span class="str">"z="</span> + z; }
+}</pre></div>
+      <div class="callout"><b>頻出語:</b> class / instance / constructor / inheritance / superclass / subclass / overload / override / abstract class / interface / recursion。</div>
+    </section>
+
+    <section id="swing" data-search>
+      <h2>4. Swing（Lesson 02-04）</h2>
+      <p class="section-intro">Swingは<code>javax.swing</code>。コンポーネントを生成し、コンテナへ追加し、レイアウトを設定し、リスナーを登録する。</p>
+      <div class="grid-2">
+        <div class="card"><h3>主要コンポーネント</h3><p>JFrame, JPanel, JLabel, JButton, JTextField, JTextArea, JPasswordField, JCheckBox, JComboBox, JRadioButton, ButtonGroup, JMenuBar, JMenu, JMenuItem, JScrollPane。</p></div>
+        <div class="card"><h3>レイアウト</h3><p><b>FlowLayout</b>: 順に並べる。<b>BorderLayout</b>: NORTH/SOUTH/EAST/WEST/CENTER。<b>GridLayout</b>: 行列の均等配置。</p></div>
+      </div>
+      <div class="code-wrap"><div class="code-title"><span>Swingイベントの型</span><span>Lesson 03-04</span></div><pre><span class="kw">public class</span> <span class="type">ButtonFrame</span> <span class="kw">extends</span> <span class="type">JFrame</span>
+    <span class="kw">implements</span> <span class="type">ActionListener</span> {
+  <span class="type">JButton</span> bt = <span class="kw">new</span> <span class="type">JButton</span>(<span class="str">"Push"</span>);
+
+  <span class="type">ButtonFrame</span>() {
+    setLayout(<span class="kw">new</span> <span class="type">FlowLayout</span>());
+    add(bt);
+    bt.addActionListener(<span class="kw">this</span>);
+    setDefaultCloseOperation(<span class="type">JFrame</span>.EXIT_ON_CLOSE);
+    setSize(<span class="num">300</span>, <span class="num">150</span>);
+    setVisible(<span class="kw">true</span>);
+  }
+  <span class="kw">public void</span> actionPerformed(<span class="type">ActionEvent</span> e) {
+    setTitle(e.getActionCommand());
+  }
+}</pre></div>
+      <table><thead><tr><th>イベント</th><th>Listener</th><th>必須メソッド</th></tr></thead><tbody><tr><td>Button / TextField</td><td>ActionListener</td><td><code>actionPerformed(ActionEvent e)</code></td></tr><tr><td>CheckBox / Choice</td><td>ItemListener</td><td><code>itemStateChanged(ItemEvent e)</code></td></tr><tr><td>Key</td><td>KeyListener</td><td><code>keyTyped / keyPressed / keyReleased</code></td></tr><tr><td>Mouse</td><td>MouseListener</td><td><code>mouseClicked / Pressed / Released / Entered / Exited</code></td></tr><tr><td>Window</td><td>WindowListener</td><td><code>windowClosing(WindowEvent e)</code>等</td></tr></tbody></table>
+      <h3>描画</h3><p><code>JPanel</code>を継承し、<code>paintComponent(Graphics g)</code>をオーバーライド。先頭で<code>super.paintComponent(g)</code>を呼び、<code>drawLine</code>、<code>drawRect</code>、<code>fillOval</code>、<code>drawString</code>等を使う。</p>
+    </section>
+
+    <section id="javafx" data-search>
+      <h2>5. JavaFX（Lesson 05-07）- 最重要</h2>
+      <p class="section-intro">画像に実際の出題例が写っている領域。Stage → Scene → root Pane → Controls、そしてイベント登録の順番を完全再現する。</p>
+      <div class="flow"><span>Application</span><i>→</i><span>Stage（Window）</span><i>→</i><span>Scene</span><i>→</i><span>Pane（root）</span><i>→</i><span>Controls / Nodes</span></div>
+      <div class="grid-3">
+        <div class="card"><h3>Pane</h3><p>FlowPane, BorderPane, GridPane, HBox, VBox。<code>setSpacing</code>、<code>setHgap</code>、<code>setVgap</code>、<code>setAlignment</code>。</p></div>
+        <div class="card"><h3>Controls</h3><p>Label, Button, TextField, TextArea, CheckBox, RadioButton, ComboBox, ListView, TableView, MenuBar。</p></div>
+        <div class="card"><h3>Event</h3><p><code>setOnAction</code>、<code>setOnKeyReleased</code>、<code>setOnMouseClicked</code>。ハンドラは<code>handle</code>。</p></div>
+      </div>
+
+      <h3>写真のHelloTest問題を完全復元</h3>
+      <div class="callout danger"><b>試験で見るポイント:</b> ①Font設定の1式、②HBoxへcontrolsを追加してBorderPaneへ配置しStageを表示する複数行、③Enter時に空文字／Male選択を判定するイベント処理。写真では空欄外のコードも必ず読む。</div>
+      <div class="code-wrap"><div class="code-title"><span>HelloTest.java - 完成形（写真から再構成）</span><span>最重要</span></div><pre><span class="kw">public class</span> <span class="type">HelloTest</span> <span class="kw">extends</span> <span class="type">Application</span> {
+  <span class="kw">private</span> <span class="type">Label</span> lb;
+  <span class="kw">private</span> <span class="type">TextField</span> tf;
+  <span class="kw">private</span> <span class="type">CheckBox</span> ck;
+
+  <span class="kw">public void</span> start(<span class="type">Stage</span> stage) <span class="kw">throws</span> <span class="type">Exception</span> {
+    lb = <span class="kw">new</span> <span class="type">Label</span>(<span class="str">"Who are you?\nMale or female?"</span>);
+    lb.setFont(<span class="type">Font</span>.font(<span class="str">"Times New Roman"</span>, <span class="type">FontWeight</span>.BOLD, <span class="num">14</span>));
+    tf = <span class="kw">new</span> <span class="type">TextField</span>(<span class="str">""</span>);
+    tf.setOnAction(<span class="kw">new</span> <span class="type">TextFieldEventHandler</span>());
+    ck = <span class="kw">new</span> <span class="type">CheckBox</span>(<span class="str">"Male"</span>);
+
+    <span class="type">HBox</span> hb = <span class="kw">new</span> <span class="type">HBox</span>();
+    <span class="type">BorderPane</span> bp = <span class="kw">new</span> <span class="type">BorderPane</span>();
+    hb.getChildren().addAll(tf, ck);
+    bp.setTop(lb);
+    bp.setCenter(hb);
+    <span class="type">Scene</span> scene = <span class="kw">new</span> <span class="type">Scene</span>(bp, <span class="num">300</span>, <span class="num">130</span>);
+    stage.setTitle(<span class="str">"Hello"</span>);
+    stage.setScene(scene);
+    stage.show();
+  }
+
+  <span class="kw">private class</span> <span class="type">TextFieldEventHandler</span>
+      <span class="kw">implements</span> <span class="type">EventHandler</span>&lt;<span class="type">ActionEvent</span>&gt; {
+    <span class="kw">public void</span> handle(<span class="type">ActionEvent</span> e) {
+      <span class="type">String</span> name = tf.getText();
+      <span class="kw">if</span> (name.isEmpty()) {
+        lb.setText(<span class="str">"Please input your name in TextField"</span>);
+      } <span class="kw">else if</span> (ck.isSelected()) {
+        lb.setText(<span class="str">"Hello, Mr. "</span> + name);
+      } <span class="kw">else</span> {
+        lb.setText(<span class="str">"Hello, Ms. "</span> + name);
+      }
+    }
+  }
+}</pre></div>
+      <div class="callout"><b>再構成上の注意:</b> 写真ではフォント引数やScene寸法が判読不能なため、それらの数値・書体は等価な例で補っている。得点核は<code>getChildren().addAll</code>、Pane配置、<code>setScene/show</code>、<code>isSelected</code>による分岐。</div>
+      <details><summary>HelloTestの実行結果を答える</summary><div><ul><li>空欄のままEnter → “Please input your name in TextField”</li><li>Hanako、Male未選択 → “Hello, Ms. Hanako”</li><li>Ichiro、Male選択 → “Hello, Mr. Ichiro”</li></ul></div></details>
+
+      <h3>JavaFXイベントの2方式</h3>
+      <div class="grid-2">
+        <div class="code-wrap"><div class="code-title"><span>名前付き内部クラス</span></div><pre>bt.setOnAction(<span class="kw">new</span> <span class="type">ButtonHandler</span>());
+
+<span class="kw">private class</span> <span class="type">ButtonHandler</span>
+    <span class="kw">implements</span> <span class="type">EventHandler</span>&lt;<span class="type">ActionEvent</span>&gt; {
+  <span class="kw">public void</span> handle(<span class="type">ActionEvent</span> e) {
+    lb.setText(<span class="str">"clicked"</span>);
+  }
+}</pre></div>
+        <div class="code-wrap"><div class="code-title"><span>匿名内部クラス</span></div><pre>bt.setOnAction(
+  <span class="kw">new</span> <span class="type">EventHandler</span>&lt;<span class="type">ActionEvent</span>&gt;() {
+    <span class="kw">public void</span> handle(<span class="type">ActionEvent</span> e) {
+      lb.setText(<span class="str">"clicked"</span>);
+    }
+  }
+);</pre></div>
+      </div>
+      <h3>アニメーション・ゲーム</h3><p>JavaFX Animation APIには<code>Timeline</code>、<code>AnimationTimer</code>、各種<code>Transition</code>（Fade/Rotate/Translate/Path等）がある。Swing側では描画ループ、FPS制御、<code>repaint()</code>が核。キー／マウスイベントで座標や状態を更新し再描画する。</p>
+    </section>
+
+    <section id="file" data-search>
+      <h2>6. File / Exception / Regex（Lesson 08）</h2>
+      <div class="callout"><b>定義:</b> Streamはデータの「逐次的・一方向」の流れ。Inputはsource → program、Outputはprogram → sink。</div>
+      <div class="grid-2">
+        <div class="code-wrap"><div class="code-title"><span>テキスト入力</span></div><pre><span class="type">File</span> file = <span class="kw">new</span> <span class="type">File</span>(<span class="str">"Myfile/file1.txt"</span>);
+<span class="kw">try</span> (<span class="type">BufferedReader</span> br = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+    <span class="kw">new</span> <span class="type">FileReader</span>(file))) {
+  <span class="type">String</span> line;
+  <span class="kw">while</span> ((line = br.readLine()) != <span class="kw">null</span>) {
+    <span class="type">System</span>.out.println(line);
+  }
+} <span class="kw">catch</span> (<span class="type">IOException</span> e) {
+  <span class="type">System</span>.out.println(e.getMessage());
+}</pre></div>
+        <div class="code-wrap"><div class="code-title"><span>テキスト出力</span></div><pre><span class="type">File</span> file = <span class="kw">new</span> <span class="type">File</span>(<span class="str">"Myfile/file2.txt"</span>);
+<span class="kw">try</span> (<span class="type">BufferedWriter</span> bw = <span class="kw">new</span> <span class="type">BufferedWriter</span>(
+    <span class="kw">new</span> <span class="type">FileWriter</span>(file))) {
+  bw.write(<span class="str">"Hello"</span>);
+  bw.newLine();
+} <span class="kw">catch</span> (<span class="type">IOException</span> e) {
+  e.printStackTrace();
+}</pre></div>
+      </div>
+      <h3>Fileの頻出メソッド</h3><p><code>exists()</code>、<code>length()</code>、<code>isDirectory()</code>、<code>isFile()</code>、<code>canRead()</code>、<code>canWrite()</code>、<code>delete()</code>、<code>renameTo(File)</code>、<code>list()</code>。パスの<code>.</code>は現在、<code>..</code>は親。</p>
+      <h3>FileChooser</h3><div class="code-wrap"><div class="code-title"><span>JavaFX FileChooser</span></div><pre><span class="type">FileChooser</span> fc = <span class="kw">new</span> <span class="type">FileChooser</span>();
+fc.getExtensionFilters().add(
+  <span class="kw">new</span> <span class="type">FileChooser.ExtensionFilter</span>(<span class="str">"CSV File"</span>, <span class="str">"*.csv"</span>));
+<span class="type">File</span> selected = fc.showOpenDialog(stage);</pre></div>
+      <h3>正規表現</h3><div class="code-wrap"><div class="code-title"><span>Pattern / Matcher</span></div><pre><span class="type">Pattern</span> pattern = <span class="type">Pattern</span>.compile(<span class="str">"[0-9]+"</span>);
+<span class="type">Matcher</span> matcher = pattern.matcher(input);
+<span class="kw">while</span> (matcher.find()) {
+  <span class="type">System</span>.out.println(matcher.start() + <span class="str">":"</span> + matcher.end());
+}
+<span class="type">String</span> changed = matcher.replaceAll(<span class="str">"#"</span>);</pre></div>
+    </section>
+
+    <section id="thread" data-search>
+      <h2>7. Thread（Lesson 09）</h2>
+      <p>Threadは軽量なsub-process／処理の最小単位。複数threadは共有メモリ上で独立・並行に処理でき、ネットワーク・ゲーム・アニメーションで使われる。</p>
+      <div class="grid-2">
+        <div class="code-wrap"><div class="code-title"><span>Runnable方式（最優先）</span></div><pre><span class="kw">class</span> <span class="type">Counter</span> <span class="kw">implements</span> <span class="type">Runnable</span> {
+  <span class="kw">public void</span> run() {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">10</span>; i++) {
+      <span class="type">System</span>.out.println(i);
+      <span class="kw">try</span> { <span class="type">Thread</span>.sleep(<span class="num">100</span>); }
+      <span class="kw">catch</span> (<span class="type">InterruptedException</span> e) { <span class="kw">return</span>; }
+    }
+  }
+}
+<span class="type">Thread</span> t = <span class="kw">new</span> <span class="type">Thread</span>(<span class="kw">new</span> <span class="type">Counter</span>());
+t.start();</pre></div>
+        <div class="card"><h3>必須メソッド</h3><ul><li><code>start()</code>: 新しい実行経路を開始</li><li><code>run()</code>: threadが行う仕事</li><li><code>sleep(ms)</code>: 指定時間休眠（static）</li><li><code>currentThread()</code>、<code>getName()</code>、<code>isAlive()</code></li><li><code>wait()</code>、<code>notify()</code>、<code>notifyAll()</code></li></ul><p class="source">資料にはstop/suspend/resumeも登場するが、現代Javaでは非推奨。試験では資料上の役割を答えられるようにする。</p></div>
+      </div>
+      <div class="callout danger"><b>超頻出の区別:</b> <code>t.run()</code>を直接呼ぶだけでは通常のメソッド呼出し。新スレッドとして動かす入口は<code>t.start()</code>。</div>
+      <h3>ライフサイクル</h3><div class="flow"><span>生成 NEW</span><i>→ start()</i><span>実行可能 RUNNABLE</span><i>→</i><span>実行</span><i>→</i><span>待機 / 休眠 / Block</span><i>→</i><span>終了</span></div>
+    </section>
+
+    <section id="network" data-search>
+      <h2>8. Network（Lesson 10-11）- 最重要</h2>
+      <div class="callout danger"><b>体験談画像で名指し:</b> 「Webのクライアントとサーバーが何たらみたいなところのコードも出た」。TCP EchoServer / EchoClient、ServerSocketとSocketの役割、stream生成順を最優先で手書きする。</div>
+      <div class="grid-2">
+        <div class="card"><h3>Client / Server</h3><p>Serverは要求を待つpassive opener、Clientは接続を開始するactive opener。Socketは通信端点で、概念的に<code>IP address : port number</code>。</p></div>
+        <div class="card"><h3>TCP / UDP</h3><p>TCPはstream-basedで接続型。UDPは<code>DatagramSocket</code>、<code>DatagramPacket</code>、<code>InetSocketAddress</code>を使う。</p></div>
+      </div>
+      <h3>TCP Echo Server</h3>
+      <div class="code-wrap"><div class="code-title"><span>EchoServer.java</span><span>Lesson 10 p.42-43 / Lesson 11 p.14-15</span></div><pre><span class="kw">public class</span> <span class="type">EchoServer</span> {
+  <span class="kw">public static final int</span> PORT = <span class="num">9999</span>;
+  <span class="kw">public static void</span> main(<span class="type">String</span>[] args) <span class="kw">throws</span> <span class="type">IOException</span> {
+    <span class="type">ServerSocket</span> listenSock = <span class="kw">new</span> <span class="type">ServerSocket</span>(PORT);
+    <span class="kw">try</span> {
+      <span class="type">Socket</span> socket = listenSock.accept();
+      <span class="type">BufferedReader</span> in = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+        <span class="kw">new</span> <span class="type">InputStreamReader</span>(socket.getInputStream()));
+      <span class="type">PrintWriter</span> out = <span class="kw">new</span> <span class="type">PrintWriter</span>(
+        <span class="kw">new</span> <span class="type">BufferedWriter</span>(
+          <span class="kw">new</span> <span class="type">OutputStreamWriter</span>(socket.getOutputStream())), <span class="kw">true</span>);
+      <span class="type">String</span> line;
+      <span class="kw">while</span> ((line = in.readLine()) != <span class="kw">null</span>) {
+        out.println(line);
+        <span class="kw">if</span> (line.equalsIgnoreCase(<span class="str">"END"</span>)) <span class="kw">break</span>;
+      }
+      socket.close();
+    } <span class="kw">finally</span> { listenSock.close(); }
+  }
+}</pre></div>
+      <h3>TCP Echo Client</h3>
+      <div class="code-wrap"><div class="code-title"><span>EchoClient.java</span><span>Lesson 10 p.45-46</span></div><pre><span class="type">InetAddress</span> addr = <span class="type">InetAddress</span>.getByName(<span class="str">"localhost"</span>);
+<span class="type">Socket</span> socket = <span class="kw">new</span> <span class="type">Socket</span>(addr, <span class="type">EchoServer</span>.PORT);
+<span class="type">BufferedReader</span> in = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+    <span class="kw">new</span> <span class="type">InputStreamReader</span>(socket.getInputStream()));
+<span class="type">PrintWriter</span> out = <span class="kw">new</span> <span class="type">PrintWriter</span>(
+    <span class="kw">new</span> <span class="type">BufferedWriter</span>(
+      <span class="kw">new</span> <span class="type">OutputStreamWriter</span>(socket.getOutputStream())), <span class="kw">true</span>);
+
+out.println(line);          <span class="cm">// Client → Server</span>
+<span class="type">String</span> reply = in.readLine(); <span class="cm">// Server → Client</span>
+socket.close();</pre></div>
+      <div class="callout success"><b>向き:</b> Clientの<code>out</code> ↔ Serverの<code>in</code>、Clientの<code>in</code> ↔ Serverの<code>out</code>。<code>PrintWriter(..., true)</code>の<code>true</code>はauto-flush。</div>
+      <h3>複数クライアント</h3><div class="flow"><span>ServerSocket</span><i>→ accept()</i><span>通信Socket</span><i>→ new Thread</i><span>Client handler</span><i>→ start()</i><span>次のacceptへ</span></div>
+      <div class="code-wrap"><div class="code-title"><span>同時処理の骨格</span></div><pre><span class="type">ServerSocket</span> server = <span class="kw">new</span> <span class="type">ServerSocket</span>(PORT);
+<span class="kw">while</span> (<span class="kw">true</span>) {
+  <span class="type">Socket</span> socket = server.accept();
+  <span class="type">Thread</span> worker = <span class="kw">new</span> <span class="type">Thread</span>(<span class="kw">new</span> <span class="type">ClientHandler</span>(socket));
+  worker.start();
+}</pre></div>
+      <h3>URL / InetAddress / WebView</h3><p>URL形式は<code>scheme://host:port/path</code>。<code>InetAddress.getByName</code>、<code>getHostName</code>、<code>getHostAddress</code>、<code>isReachable</code>。JavaFX埋込みブラウザは<code>WebView</code> → <code>getEngine()</code> → <code>webEngine.load(url)</code>。</p>
+    </section>
+
+    <section id="web" data-search>
+      <h2>9. Servlet / JSP（Lesson 12-13）</h2>
+      <h3>HTTPの基本</h3><p>Web client（browser）がHTTP Request、Web serverがHTTP Response。資料ではHTTPをconnection-orientedだがstatelessと説明。Requestはrequest line・headers・optional body、Responseはstatus line・headers・body。</p>
+      <table><thead><tr><th>GET</th><th>POST</th></tr></thead><tbody><tr><td>主にURLで資源取得。フォーム値がquery stringに現れやすい。</td><td>値をrequest bodyへ送り、作成・更新や多量／機微な入力に向く。</td></tr></tbody></table>
+      <h3>Servlet</h3>
+      <div class="code-wrap"><div class="code-title"><span>基本形</span><span>Lesson 12 / Lesson 14 p.48</span></div><pre><span class="kw">public class</span> <span class="type">HelloServlet</span> <span class="kw">extends</span> <span class="type">HttpServlet</span> {
+  <span class="kw">protected void</span> doGet(<span class="type">HttpServletRequest</span> request,
+                       <span class="type">HttpServletResponse</span> response)
+      <span class="kw">throws</span> <span class="type">ServletException</span>, <span class="type">IOException</span> {
+    response.setContentType(<span class="str">"text/html; charset=UTF-8"</span>);
+    <span class="type">String</span> name = request.getParameter(<span class="str">"name"</span>);
+    <span class="type">PrintWriter</span> out = response.getWriter();
+    out.println(<span class="str">"&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello "</span> + name + <span class="str">"&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span>);
+    out.close();
+  }
+}</pre></div>
+      <p><b>作成手順:</b> <code>HttpServlet</code>を継承 → <code>doGet</code>または<code>doPost</code> → <code>request.getParameter</code> → <code>response.getWriter</code> → HTMLを出力 → writerを閉じる。TomcatはServlet Container。</p>
+      <h3>JSP</h3>
+      <table><thead><tr><th>記法</th><th>名称</th><th>役割</th></tr></thead><tbody><tr><td><code>&lt;% code %&gt;</code></td><td>scriptlet</td><td>Java文</td></tr><tr><td><code>&lt;%= expression %&gt;</code></td><td>expression</td><td>値を出力</td></tr><tr><td><code>&lt;%! declaration %&gt;</code></td><td>declaration</td><td>変数・メソッド宣言</td></tr><tr><td><code>&lt;%@ ... %&gt;</code></td><td>directive</td><td>page / include等の全体設定</td></tr><tr><td><code>&lt;jsp:include ... /&gt;</code></td><td>action</td><td>実行時に別資源を含める</td></tr><tr><td><code>&lt;jsp:forward ... /&gt;</code></td><td>action</td><td>別資源へ処理を転送</td></tr></tbody></table>
+      <div class="code-wrap"><div class="code-title"><span>JSPフォーム＋session</span></div><pre>&lt;%@ page contentType=<span class="str">"text/html; charset=UTF-8"</span> %&gt;
+&lt;%
+  <span class="type">String</span> name = request.getParameter(<span class="str">"name"</span>);
+  session.setAttribute(<span class="str">"user"</span>, name);
+%&gt;
+&lt;p&gt;Hello, &lt;%= name %&gt;&lt;/p&gt;
+&lt;p&gt;Session user: &lt;%= session.getAttribute(<span class="str">"user"</span>) %&gt;&lt;/p&gt;</pre></div>
+      <p><b>暗黙オブジェクト:</b> <code>out</code>、<code>request</code>、<code>response</code>、<code>session</code>、<code>application</code>等。JSPは最終的にServletへ変換・コンパイルされ、サーバー側で実行される。</p>
+    </section>
+
+    <section id="predicted" data-search>
+      <h2>10. 予想穴埋め問題</h2>
+      <p class="section-intro">まず紙に答えを書いてから解答を開く。空欄は写真の形式に合わせ、1式・1～2行・複数行を混ぜている。</p>
+
+      <div class="question"><div class="qhead"><b>予想1：JavaFXの起動</b><span class="points">重要度 S</span></div><div class="code-wrap"><pre><span class="kw">public class</span> App <span class="kw">extends</span> <span class="blank">①</span> {
+  <span class="kw">public void</span> start(<span class="blank">②</span> stage) {
+    <span class="type">BorderPane</span> root = <span class="kw">new</span> <span class="type">BorderPane</span>();
+    <span class="type">Scene</span> scene = <span class="kw">new</span> <span class="type">Scene</span>(<span class="blank">③</span>, <span class="num">400</span>, <span class="num">200</span>);
+    stage.<span class="blank">④</span>(scene);
+    stage.<span class="blank">⑤</span>();
+  }
+}</pre></div><details><summary>解答と理由</summary><div>① <code>Application</code> ② <code>Stage</code> ③ <code>root</code> ④ <code>setScene</code> ⑤ <code>show</code>。Sceneはroot nodeを受け取る。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想2：TextField Enterイベント</b><span class="points">重要度 S</span></div><div class="code-wrap"><pre>tf.<span class="blank">①</span>(<span class="kw">new</span> <span class="type">TextHandler</span>());
+<span class="kw">private class</span> <span class="type">TextHandler</span>
+    <span class="kw">implements</span> <span class="type">EventHandler</span>&lt;<span class="blank">②</span>&gt; {
+  <span class="kw">public void</span> <span class="blank">③</span>(<span class="type">ActionEvent</span> e) {
+    lb.setText(tf.<span class="blank">④</span>());
+  }
+}</pre></div><details><summary>解答</summary><div>① <code>setOnAction</code> ② <code>ActionEvent</code> ③ <code>handle</code> ④ <code>getText</code>。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想3：CheckBoxで分岐</b><span class="points">重要度 S</span></div><div class="code-wrap"><pre><span class="kw">if</span> (name.<span class="blank">①</span>()) {
+  lb.setText(<span class="str">"Please input name"</span>);
+} <span class="kw">else if</span> (ck.<span class="blank">②</span>()) {
+  lb.setText(<span class="str">"Hello, Mr. "</span> + name);
+} <span class="kw">else</span> {
+  <span class="blank">③ 複数行</span>
+}</pre></div><details><summary>解答</summary><div>① <code>isEmpty</code> ② <code>isSelected</code> ③ <code>lb.setText("Hello, Ms. " + name);</code></div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想4：Swingイベント</b><span class="points">重要度 A</span></div><div class="code-wrap"><pre><span class="kw">class</span> F <span class="kw">extends</span> <span class="type">JFrame</span> <span class="kw">implements</span> <span class="blank">①</span> {
+  F() { bt.<span class="blank">②</span>(<span class="kw">this</span>); }
+  <span class="kw">public void</span> <span class="blank">③</span>(<span class="type">ActionEvent</span> e) { }
+}</pre></div><details><summary>解答</summary><div>① <code>ActionListener</code> ② <code>addActionListener</code> ③ <code>actionPerformed</code>。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想5：ファイル入力</b><span class="points">重要度 A</span></div><div class="code-wrap"><pre><span class="type">BufferedReader</span> br = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+    <span class="kw">new</span> <span class="blank">①</span>(file));
+<span class="type">String</span> line;
+<span class="kw">while</span> ((line = br.<span class="blank">②</span>()) != <span class="blank">③</span>) {
+  <span class="type">System</span>.out.println(line);
+}
+br.<span class="blank">④</span>();</pre></div><details><summary>解答</summary><div>① <code>FileReader</code> ② <code>readLine</code> ③ <code>null</code> ④ <code>close</code>。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想6：Runnable</b><span class="points">重要度 S</span></div><div class="code-wrap"><pre><span class="kw">class</span> Task <span class="kw">implements</span> <span class="blank">①</span> {
+  <span class="kw">public void</span> <span class="blank">②</span>() { <span class="cm">/* work */</span> }
+}
+<span class="type">Thread</span> t = <span class="kw">new</span> <span class="type">Thread</span>(<span class="kw">new</span> <span class="blank">③</span>());
+t.<span class="blank">④</span>();</pre></div><details><summary>解答</summary><div>① <code>Runnable</code> ② <code>run</code> ③ <code>Task</code> ④ <code>start</code>。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想7：TCPサーバー</b><span class="points">重要度 S+</span></div><div class="code-wrap"><pre><span class="type">ServerSocket</span> server = <span class="kw">new</span> <span class="type">ServerSocket</span>(<span class="num">9999</span>);
+<span class="type">Socket</span> socket = server.<span class="blank">①</span>();
+<span class="type">BufferedReader</span> in = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+  <span class="kw">new</span> <span class="type">InputStreamReader</span>(socket.<span class="blank">②</span>()));
+<span class="type">PrintWriter</span> out = <span class="kw">new</span> <span class="type">PrintWriter</span>(
+  <span class="kw">new</span> <span class="type">BufferedWriter</span>(
+    <span class="kw">new</span> <span class="type">OutputStreamWriter</span>(socket.<span class="blank">③</span>())), <span class="blank">④</span>);</pre></div><details><summary>解答</summary><div>① <code>accept</code> ② <code>getInputStream</code> ③ <code>getOutputStream</code> ④ <code>true</code>。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想8：TCPクライアント</b><span class="points">重要度 S+</span></div><div class="code-wrap"><pre><span class="type">InetAddress</span> addr = <span class="type">InetAddress</span>.<span class="blank">①</span>(<span class="str">"localhost"</span>);
+<span class="type">Socket</span> socket = <span class="kw">new</span> <span class="type">Socket</span>(<span class="blank">②</span>, <span class="num">9999</span>);
+out.<span class="blank">③</span>(message);
+<span class="type">String</span> reply = in.<span class="blank">④</span>();</pre></div><details><summary>解答</summary><div>① <code>getByName</code> ② <code>addr</code> ③ <code>println</code> ④ <code>readLine</code>。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想9：Servlet</b><span class="points">重要度 S</span></div><div class="code-wrap"><pre><span class="kw">public class</span> S <span class="kw">extends</span> <span class="blank">①</span> {
+  <span class="kw">protected void</span> <span class="blank">②</span>(<span class="type">HttpServletRequest</span> request,
+      <span class="type">HttpServletResponse</span> response) <span class="kw">throws</span> <span class="type">IOException</span> {
+    <span class="type">String</span> name = request.<span class="blank">③</span>(<span class="str">"name"</span>);
+    <span class="type">PrintWriter</span> out = response.<span class="blank">④</span>();
+  }
+}</pre></div><details><summary>解答</summary><div>① <code>HttpServlet</code> ② <code>doGet</code> ③ <code>getParameter</code> ④ <code>getWriter</code>。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想10：JSPタグ</b><span class="points">重要度 A</span></div><p>次を対応させよ: scriptlet / expression / declaration / directive。</p><div class="code-wrap"><pre>① &lt;%  Java文  %&gt;
+② &lt;%= 値を返す式 %&gt;
+③ &lt;%! 変数・メソッド宣言 %&gt;
+④ &lt;%@ page contentType=<span class="str">"..."</span> %&gt;</pre></div><details><summary>解答</summary><div>① scriptlet ② expression ③ declaration ④ directive。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想11：複数クライアント</b><span class="points">重要度 A</span></div><div class="code-wrap"><pre><span class="kw">while</span> (<span class="kw">true</span>) {
+  <span class="type">Socket</span> socket = server.<span class="blank">①</span>();
+  <span class="type">Thread</span> worker = <span class="kw">new</span> <span class="type">Thread</span>(
+      <span class="kw">new</span> <span class="type">ClientHandler</span>(<span class="blank">②</span>));
+  worker.<span class="blank">③</span>();
+}</pre></div><details><summary>解答</summary><div>① <code>accept</code> ② <code>socket</code> ③ <code>start</code>。accept後すぐhandler threadへ渡すから次のclientを待てる。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想12：WebView</b><span class="points">重要度 B</span></div><div class="code-wrap"><pre><span class="type">WebView</span> browser = <span class="kw">new</span> <span class="type">WebView</span>();
+<span class="type">WebEngine</span> engine = browser.<span class="blank">①</span>();
+engine.<span class="blank">②</span>(<span class="str">"https://www.hosei.ac.jp"</span>);</pre></div><details><summary>解答</summary><div>① <code>getEngine</code> ② <code>load</code>。</div></details></div>
+    </section>
+
+    <section id="mock" data-search>
+      <h2>11. 60分模擬試験</h2>
+      <div class="callout danger"><b>本番条件:</b> 参照せず60分を計る。配点100点。JavaFXとClient/Serverで50点を確保する設計。</div>
+      <div class="exam-grid">
+        <div>
+          <div class="question"><div class="qhead"><b>大問1 JavaFX GUI</b><span class="points">30点 / 18分</span></div><ol><li>Application / Stage / Scene / BorderPaneの骨格を完成（10）</li><li>TextFieldのEnterイベントを登録（6）</li><li>CheckBoxの選択状態でLabelを変更（8）</li><li>HBoxへ2部品を追加し、BorderPaneへ配置（6）</li></ol></div>
+          <div class="question"><div class="qhead"><b>大問2 TCP Client / Server</b><span class="points">25点 / 15分</span></div><ol><li>ServerSocket生成とaccept（6）</li><li>SocketからBufferedReader生成（7）</li><li>SocketからPrintWriter生成、auto-flush有効化（8）</li><li>client→server / server→clientのstream対応（4）</li></ol></div>
+          <div class="question"><div class="qhead"><b>大問3 File / Thread</b><span class="points">20点 / 12分</span></div><ol><li>BufferedReader / FileReader、readLine、null判定（10）</li><li>Runnable、run、Thread、startを完成（10）</li></ol></div>
+        </div>
+        <div>
+          <div class="question"><div class="qhead"><b>大問4 Servlet / JSP</b><span class="points">15点 / 9分</span></div><ol><li>HttpServlet / doGet / request / response（8）</li><li>JSP4タグの名称と役割（4）</li><li>sessionのset/getAttribute（3）</li></ol></div>
+          <div class="question"><div class="qhead"><b>大問5 用語・挙動</b><span class="points">10点 / 6分</span></div><ol><li>startとrunの違い（2）</li><li>ServerSocketとSocketの違い（2）</li><li>Input/Output Streamの向き（2）</li><li>GETとPOST（2）</li><li>overloadとoverride（2）</li></ol></div>
+          <div class="card answer-key"><h3>自己採点基準</h3><p><b>90-100:</b> 本番-ready。<br><b>75-89:</b> JavaFX/TCPの綴りを再確認。<br><b>60-74:</b> テンプレートをもう1周手書き。<br><b>59以下:</b> 予想1-9を解答非表示で再演習。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="last" data-search>
+      <h2>12. 直前チェックリスト</h2>
+      <p>チェック状態はこのブラウザに保存される。すべてチェックできれば、最低限の穴埋め型は完成。</p>
+      <div class="grid-2">
+        <div>
+          <label class="checkline"><input type="checkbox" data-progress><span>JavaFXの<code>start(Stage)</code>から<code>stage.show()</code>まで何も見ずに書ける</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span><code>setOnAction</code> / <code>EventHandler&lt;ActionEvent&gt;</code> / <code>handle</code>を書ける</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span><code>getChildren().addAll</code>とBorderPaneの配置メソッドを使える</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span><code>getText</code>、<code>isEmpty</code>、<code>isSelected</code>で分岐を書ける</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span>Swingの<code>ActionListener</code>とJavaFXの<code>EventHandler</code>を混同しない</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span>FileReader→BufferedReader→readLine→closeの順を書ける</span></label>
+        </div>
+        <div>
+          <label class="checkline"><input type="checkbox" data-progress><span>Runnable→run→Thread→startの順を書ける</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span>ServerSocket→accept→Socket→streamsを何も見ずに書ける</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span>ClientのSocket生成とinput/output streamを何も見ずに書ける</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span><code>PrintWriter(..., true)</code>のtrueがauto-flushだと説明できる</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span>ServletのdoGetとJSP4タグを書ける</span></label>
+          <label class="checkline"><input type="checkbox" data-progress><span>60分模擬試験で75点以上を取った</span></label>
+        </div>
+      </div>
+      <div class="callout success"><b>最後の5分で見る12語:</b> <code>setScene</code> / <code>show</code> / <code>setOnAction</code> / <code>handle</code> / <code>isSelected</code> / <code>readLine</code> / <code>Runnable</code> / <code>start</code> / <code>accept</code> / <code>getInputStream</code> / <code>getParameter</code> / <code>getWriter</code>。</div>
+    </section>
+
+    <footer>
+      <p><b>資料根拠:</b> Programming 3 (Java) Lesson 01-14講義PDF、授業写真3枚、メッセージ画像1枚。Lesson 14 p.4の全範囲、p.5-52の総復習、p.79の試験条件を中心に構成。</p>
+      <p><b>注意:</b> 本書は提供資料から作成した予想対策であり、実際の出題を保証するものではない。写真で判読できないフォント名・サイズ・Scene寸法は等価なコードで補った。</p>
+    </footer>
+  </div></main>
+</div>
+
+<script>
+  const boxes = [...document.querySelectorAll('[data-progress]')];
+  const progressText = document.getElementById('progressText');
+  const progressFill = document.getElementById('progressFill');
+  const saved = JSON.parse(localStorage.getItem('java3-final-progress') || '[]');
+  boxes.forEach((box, i) => {
+    box.checked = Boolean(saved[i]);
+    box.addEventListener('change', updateProgress);
+  });
+  function updateProgress() {
+    const state = boxes.map(b => b.checked);
+    localStorage.setItem('java3-final-progress', JSON.stringify(state));
+    const done = state.filter(Boolean).length;
+    const pct = boxes.length ? Math.round(done / boxes.length * 100) : 0;
+    progressText.textContent = pct + '%';
+    progressFill.style.width = pct + '%';
+  }
+  updateProgress();
+
+  document.getElementById('resetProgress').addEventListener('click', () => {
+    boxes.forEach(b => b.checked = false);
+    updateProgress();
+  });
+  document.getElementById('expandAll').addEventListener('click', (e) => {
+    const details = [...document.querySelectorAll('details')];
+    const shouldOpen = details.some(d => !d.open);
+    details.forEach(d => d.open = shouldOpen);
+    e.currentTarget.textContent = shouldOpen ? 'すべての解答を閉じる' : 'すべての解答を開く';
+  });
+
+  const search = document.getElementById('search');
+  const searchable = [...document.querySelectorAll('[data-search]')];
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLocaleLowerCase('ja');
+    searchable.forEach(el => el.classList.toggle('hidden-by-search', q && !el.textContent.toLocaleLowerCase('ja').includes(q)));
+  });
+
+  const links = [...document.querySelectorAll('nav a')];
+  const navToggle = document.getElementById('navToggle');
+  const chapterNav = document.getElementById('chapterNav');
+  navToggle.addEventListener('click', () => {
+    const open = chapterNav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(open));
+    navToggle.textContent = open ? '目次を閉じる' : '目次を開く';
+  });
+  links.forEach(link => link.addEventListener('click', () => {
+    if (window.matchMedia('(max-width: 680px)').matches) {
+      chapterNav.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.textContent = '目次を開く';
+    }
+  }));
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id));
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
