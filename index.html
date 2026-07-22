@@ -116,6 +116,22 @@
     .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
     .btn { padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--navy); background: #fff; cursor: pointer; font-weight: 800; }
     .btn:hover { border-color: var(--blue); color: var(--blue); }
+    .beginner-tools { margin: 14px 0 20px; }
+    .beginner-toggle {
+      min-height: 42px; padding: 8px 13px; border: 1px solid #a9c4ee; border-radius: 8px;
+      color: var(--blue); background: #fff; cursor: pointer; font-weight: 900;
+    }
+    .beginner-toggle::before { content: "?"; display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 7px; border-radius: 50%; color: #fff; background: var(--blue); font-size: 12px; }
+    .beginner-toggle:hover, .beginner-toggle[aria-expanded="true"] { border-color: var(--blue); background: var(--blue-soft); }
+    .beginner-panel {
+      margin-top: 10px; padding: 18px 20px; border: 1px solid #bcd1f1; border-left: 4px solid var(--blue);
+      border-radius: 0 var(--radius) var(--radius) 0; background: #f7faff;
+    }
+    .beginner-panel[hidden] { display: none !important; }
+    .beginner-panel h3 { margin: 0 0 8px; font-size: 18px; }
+    .beginner-panel p { margin: 7px 0; }
+    .beginner-panel ol { margin: 9px 0; }
+    .beginner-memory { margin-top: 12px; padding: 11px 13px; border-radius: 8px; color: #173c72; background: #e8f1ff; }
     .hidden-by-search { display: none !important; }
     footer { margin-top: 70px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
     @media (max-width: 980px) {
@@ -176,6 +192,9 @@
       }
       .toolbar { display: grid; grid-template-columns: 1fr; }
       .btn { min-height: 46px; }
+      .beginner-tools { margin: 12px 0 17px; }
+      .beginner-toggle { width: 100%; min-height: 46px; text-align: left; }
+      .beginner-panel { padding: 16px 14px; }
       summary { min-height: 48px; padding: 12px 14px; }
       .checkline { min-height: 52px; padding: 11px 10px; }
       .question, .card { padding: 17px 15px; }
@@ -676,6 +695,84 @@ engine.<span class="blank">②</span>(<span class="str">"https://www.hosei.ac.jp
 </div>
 
 <script>
+  const beginnerGuides = {
+    overview: {
+      title: 'まず、この試験がどんなものか',
+      body: '<p>この章は「何を、どのように勉強するか」を決める場所です。試験は60分で、資料を見られません。そのため、用語を眺めるだけでなく、短いコードを自分の手で書けるようにします。</p><ol><li>最初に赤い「コード穴埋め」を最重要だと覚える</li><li>JavaFXとClient / Serverを先に練習する</li><li>最後に模擬試験を60分で解く</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> この試験は「コードの前後を読んで、足りない1行を思い出す試験」。</div>'
+    },
+    strategy: {
+      title: '勉強する順番を簡単に言うと',
+      body: '<p>全部を同じ深さで覚えようとすると大変です。まず、どのプログラムにも共通する「部品を作る → 登録する → 配置する → 動かす」という順番を理解します。</p><ol><li>完成画面から必要な部品を探す</li><li>ボタンや入力欄が何をきっかけに動くか探す</li><li>変化するLabelや出力先を探す</li><li>前後の型に合うメソッド名を書く</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> 空欄だけを見ず、空欄の左側のオブジェクトと右側の引数を見る。</div>'
+    },
+    master: {
+      title: 'テンプレートは「料理の手順」',
+      body: '<p>テンプレートとは、毎回ほぼ同じ順番で書くコードの型です。丸暗記するより、各行が次の行を準備していると考えると覚えやすくなります。</p><ol><li>JavaFXはStageにSceneを入れてshowする</li><li>ファイルはReader / WriterをBufferedで包む</li><li>Threadは仕事をrunに書き、startで開始する</li><li>サーバーはacceptしてから通信用Socketを使う</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> 外側の大きな箱を作り、内側の具体的な部品を順番につなぐ。</div>'
+    },
+    java: {
+      title: 'クラスとインスタンスから理解する',
+      body: '<p>クラスは設計図、インスタンスはその設計図からnewで作った実物です。フィールドは物が持つデータ、メソッドは物ができる操作、コンストラクタは作る瞬間の初期設定です。</p><ol><li>staticはクラス全体で共有する</li><li>thisは今操作している自分自身</li><li>superは親クラス側</li><li>extendsは親の性質を受け継ぐ</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> classは設計図、newしたものがinstance。</div>'
+    },
+    swing: {
+      title: 'Swingは「窓に部品を置く」仕組み',
+      body: '<p>JFrameが窓、JPanelが窓の中の区画、JButtonやJTextFieldが操作部品です。Layoutが部品の並べ方を決め、Listenerがクリックなどを受け取ります。</p><ol><li>部品をnewする</li><li>addでコンテナに入れる</li><li>addActionListenerで監視を始める</li><li>actionPerformedに反応を書く</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> SwingのActionイベントは addActionListener → actionPerformed。</div>'
+    },
+    javafx: {
+      title: 'JavaFXを入れ物の階層で考える',
+      body: '<p>Stageは窓、Sceneは窓に映す一つの画面、Paneは部品を並べる土台、ControlはButtonやTextFieldです。大きな入れ物から小さな部品へ順に組み立てます。</p><ol><li>Paneを作りControlを追加する</li><li>PaneをrootにしてSceneを作る</li><li>StageへSceneを設定する</li><li>showで窓を表示する</li><li>setOnActionとhandleで操作への反応を書く</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> Stage → Scene → Pane → Control、イベントは setOnAction → handle。</div>'
+    },
+    file: {
+      title: 'ファイル操作はデータの流れる向き',
+      body: '<p>Inputはファイルからプログラムへ読む流れ、Outputはプログラムからファイルへ書く流れです。Reader / Writerが実際の読み書きをし、Bufferedを付けるとまとめて効率よく処理できます。</p><ol><li>Fileで場所を表す</li><li>FileReader / FileWriterを作る</li><li>BufferedReader / BufferedWriterで包む</li><li>readLineまたはwriteを使う</li><li>最後に閉じる</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> 読むならReader、書くならWriter。</div>'
+    },
+    thread: {
+      title: 'Threadは「別の作業係」',
+      body: '<p>通常のプログラムは一つずつ順番に処理します。Threadを使うと、複数の作業係が並行して動いているように処理できます。何をするかはrunに書き、実際の開始はstartです。</p><ol><li>Runnableをimplementsする</li><li>runに仕事を書く</li><li>new Thread(task)で作業係を作る</li><li>startで開始する</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> 仕事の内容はrun、開始命令はstart。</div>'
+    },
+    network: {
+      title: 'ClientとServerを電話にたとえる',
+      body: '<p>Serverは電話を待つ側、Clientは電話をかける側です。ServerSocketは着信待ち専用、accept後に得るSocketは会話専用です。会話の受信がinput、送信がoutputです。</p><ol><li>ServerはServerSocketでportを開く</li><li>acceptで接続を受ける</li><li>両側がSocketからinput / outputを作る</li><li>printlnで送り、readLineで受ける</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> ServerSocketは待受、Socketは会話。</div>'
+    },
+    web: {
+      title: 'Webは「お願い」と「返事」',
+      body: '<p>BrowserがRequestというお願いを送り、ServerがResponseという返事を返します。ServletはJavaで返事を作るクラス、JSPはHTMLの中にJava処理を埋め込む仕組みです。</p><ol><li>request.getParameterで入力を受け取る</li><li>response.getWriterで返事の出力先を得る</li><li>ServletはdoGet / doPostで処理する</li><li>JSPの式タグは値をHTMLへ表示する</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> Requestはお願い、Responseは返事。</div>'
+    },
+    predicted: {
+      title: '予想問題の正しい使い方',
+      body: '<p>最初から解答を開かず、まず前後のコードだけで考えます。分からないときは「この変数の型は何か」「左側のオブジェクトに何をさせたいか」を日本語にします。</p><ol><li>紙に答えを書く</li><li>コンパイルできる形か確認する</li><li>解答を開いて1文字ずつ比べる</li><li>間違えた問題だけ翌日にもう一度解く</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> 答えを覚えるのではなく、前後から答えを決める。</div>'
+    },
+    mock: {
+      title: '模擬試験は本番の練習',
+      body: '<p>知識だけでなく、60分の使い方も練習します。難しい空欄で止まり続けず、先に書ける問題を埋めて得点を確保します。</p><ol><li>18分でJavaFX</li><li>15分でClient / Server</li><li>12分でFile / Thread</li><li>9分でServlet / JSP</li><li>最後の6分で用語と見直し</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> 一つの空欄で止まらず、書けるところから得点する。</div>'
+    },
+    last: {
+      title: '最後は「見ずに書けるか」を確認',
+      body: '<p>チェックは理解した気がするかではなく、資料を閉じて実際に書けるかで判断します。書けなかった項目は、その項目の章へ戻ってテンプレートを一度手書きします。</p><ol><li>チェック項目を一つ選ぶ</li><li>何も見ずに紙へ書く</li><li>本書と比較する</li><li>完全に合ったらチェックする</li></ol><div class="beginner-memory"><b>まず覚える一文:</b> 「分かる」ではなく「見ずに書ける」で判定する。</div>'
+    }
+  };
+
+  document.querySelectorAll('[data-search][id]').forEach(section => {
+    const guide = beginnerGuides[section.id];
+    if (!guide) return;
+    const heading = section.querySelector('h1, h2');
+    const intro = section.querySelector(':scope > .section-intro, :scope > .lead');
+    const anchor = intro || heading;
+    if (!anchor) return;
+    const tools = document.createElement('div');
+    tools.className = 'beginner-tools';
+    const panelId = 'beginner-' + section.id;
+    tools.innerHTML = '<button class="beginner-toggle" type="button" aria-expanded="false" aria-controls="' + panelId + '">初心者向け解説を表示</button>' +
+      '<div class="beginner-panel" id="' + panelId + '" hidden><h3>' + guide.title + '</h3>' + guide.body + '</div>';
+    anchor.insertAdjacentElement('afterend', tools);
+    const button = tools.querySelector('.beginner-toggle');
+    const panel = tools.querySelector('.beginner-panel');
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(open));
+      button.textContent = open ? '初心者向け解説を閉じる' : '初心者向け解説を表示';
+      panel.hidden = !open;
+    });
+  });
+
   const boxes = [...document.querySelectorAll('[data-progress]')];
   const progressText = document.getElementById('progressText');
   const progressFill = document.getElementById('progressFill');
