@@ -104,6 +104,16 @@
     .qhead { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 10px; }
     .qhead b { color: var(--navy); font-size: 17px; }
     .points { color: var(--muted); font-size: 12px; font-weight: 900; }
+    .quick-quiz { padding: clamp(20px, 4vw, 34px); border: 1px solid #bfd3f3; border-radius: var(--radius); background: linear-gradient(135deg, #f8fbff, #fff); box-shadow: var(--shadow); }
+    .quiz-meta { color: var(--blue); font-size: 13px; font-weight: 900; }
+    .quiz-prompt { margin: 18px 0 0; color: var(--navy); font-size: clamp(20px, 3vw, 28px); font-weight: 900; line-height: 1.55; }
+    .quiz-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .quiz-btn { min-height: 46px; padding: 10px 16px; border: 1px solid var(--blue); border-radius: 8px; color: #fff; background: var(--blue); cursor: pointer; font-weight: 900; }
+    .quiz-btn:hover { background: #0f4fab; }
+    .quiz-btn.secondary { color: var(--blue); background: #fff; }
+    .quiz-answer { margin-top: 18px; padding: 16px; border-left: 4px solid var(--green); border-radius: 0 9px 9px 0; background: var(--green-soft); }
+    .quiz-answer[hidden] { display: none; }
+    .quiz-answer b { color: #12663a; }
     .checkline { display: flex; gap: 10px; align-items: flex-start; margin: 9px 0; padding: 9px 10px; border-radius: 8px; background: var(--surface); }
     .checkline input { margin-top: 6px; accent-color: var(--green); }
     .exam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -201,6 +211,8 @@
       }
       .toolbar { display: grid; grid-template-columns: 1fr; }
       .btn { min-height: 46px; }
+      .quiz-actions { display: grid; grid-template-columns: 1fr; }
+      .quiz-btn { width: 100%; }
       .beginner-tools { margin: 12px 0 17px; }
       .beginner-toggle { width: 100%; min-height: 46px; text-align: left; }
       .beginner-panel { padding: 16px 14px; }
@@ -248,6 +260,7 @@
       <a href="#web">9. Servlet / JSP（Lesson 12-13）</a>
       <div class="group">PRACTICE</div>
       <a href="#predicted">10. 予想穴埋め問題</a>
+      <a href="#quick-quiz">10.5 一問一答クイズ</a>
       <a href="#mock">11. 60分模擬試験</a>
       <a href="#last">12. 直前チェック</a>
     </nav>
@@ -704,6 +717,20 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
        value=<span class="blank">② 1行</span>&gt;</pre></div><details><summary>解答と考え方</summary><div>① <code>String name = (String) session.getAttribute("user");</code><br>② <code>"&lt;%= name %&gt;"</code><br><code>getAttribute</code> の戻り値は <code>Object</code> なので、Stringとして使うには <code>(String)</code> を付ける。JSPの <code>&lt;%= ... %&gt;</code> は値をHTMLへ表示する式タグ。</div></details></div>
     </section>
 
+    <section id="quick-quiz" data-search>
+      <h2>10.5 穴埋め一問一答クイズ</h2>
+      <p class="section-intro">40問の中からランダムに1問出題。まず自分で空欄を埋めてから「答えと解説を表示」を押す。次の問題に進むと答えは再び隠れる。</p>
+      <div class="quick-quiz" aria-live="polite">
+        <div class="quiz-meta" id="quizMeta">40問からランダム出題</div>
+        <div class="quiz-prompt" id="quizPrompt"></div>
+        <div class="quiz-actions">
+          <button class="quiz-btn" id="showQuizAnswer" type="button" aria-expanded="false" aria-controls="quizAnswer">答えと解説を表示</button>
+          <button class="quiz-btn secondary" id="nextQuiz" type="button">次のクイズへ</button>
+        </div>
+        <div class="quiz-answer" id="quizAnswer" hidden></div>
+      </div>
+    </section>
+
     <section id="mock" data-search>
       <h2>11. 60分模擬試験</h2>
       <div class="callout danger"><b>本番条件:</b> 参照せず60分を計る。配点100点。JavaFXとClient/Serverで50点を確保する設計。</div>
@@ -830,6 +857,77 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
       panel.hidden = !open;
     });
   });
+
+  const quickQuizQuestions = [
+    { q: '<code>public class App extends ____</code> の空欄は？', a: '<code>Application</code>', e: 'JavaFXアプリは <code>Application</code> を継承して始める。' },
+    { q: '<code>public void start(____ stage)</code> の空欄は？', a: '<code>Stage</code>', e: '<code>Stage</code> はアプリの外側の窓。' },
+    { q: '<code>stage.____(scene);</code> の空欄は？', a: '<code>setScene</code>', e: '作った画面 <code>scene</code> を窓へ設定する。' },
+    { q: '<code>stage.____();</code> で窓を表示する。空欄は？', a: '<code>show</code>', e: '<code>show()</code> は完成したStageを表示する最後の命令。' },
+    { q: '<code>new Scene(____, 400, 200)</code> の最初の引数は何？', a: '<code>root</code>（または直前で作ったPane変数）', e: 'Sceneの最初の引数は画面の土台となるroot node。変数名は資料の前後に合わせる。' },
+    { q: '<code>tf.____(new TextHandler());</code> の空欄は？', a: '<code>setOnAction</code>', e: 'TextFieldでEnterを押したときの処理を登録する。' },
+    { q: '<code>EventHandler&lt;____&gt;</code> の空欄は？', a: '<code>ActionEvent</code>', e: 'ButtonクリックやTextFieldのEnterでは <code>ActionEvent</code> を使う。' },
+    { q: '<code>public void ____(ActionEvent e)</code> の空欄は？', a: '<code>handle</code>', e: 'JavaFXのEventHandlerが実行するメソッド名は <code>handle</code>。' },
+    { q: '<code>String name = tf.____();</code> の空欄は？', a: '<code>getText</code>', e: 'TextFieldに入力された文字を取り出す。' },
+    { q: '<code>lb.____("Hello");</code> の空欄は？', a: '<code>setText</code>', e: 'Labelに表示する文字を変更する。' },
+    { q: '<code>if (name.____())</code> で空文字を調べる。空欄は？', a: '<code>isEmpty</code>', e: '文字列が空なら <code>true</code> になる。' },
+    { q: '<code>if (ck.____())</code> でCheckBoxの選択を調べる。空欄は？', a: '<code>isSelected</code>', e: 'チェックが付いていれば <code>true</code>。' },
+    { q: '<code>hb.getChildren().____(tf, ck);</code> の空欄は？', a: '<code>addAll</code>', e: 'HBoxに複数の部品をまとめて追加する。' },
+    { q: '<code>bp.____(hb);</code> でHBoxを画面下に置く。空欄は？', a: '<code>setBottom</code>', e: 'BorderPaneの下部へ置くメソッド。' },
+    { q: '<code>root.____(mb);</code> でMenuBarを画面上部に置く。空欄は？', a: '<code>setTop</code>', e: 'BorderPaneの上部へ置くメソッド。' },
+    { q: '<code>class F extends JFrame implements ____</code> の空欄は？', a: '<code>ActionListener</code>', e: 'Swingのクリックイベントを受け取るインターフェース。' },
+    { q: '<code>bt.____(this);</code> の空欄は？', a: '<code>addActionListener</code>', e: 'SwingのButtonへクリック時の担当者を登録する。' },
+    { q: '<code>public void ____(ActionEvent e)</code>（Swing）の空欄は？', a: '<code>actionPerformed</code>', e: 'SwingのActionListenerが実行するメソッド名。JavaFXの <code>handle</code> と区別する。' },
+    { q: '<code>new BufferedReader(new ____(file))</code> の空欄は？', a: '<code>FileReader</code>', e: 'ファイルから文字を読む道具はReader。' },
+    { q: '<code>line = br.____()</code> の空欄は？', a: '<code>readLine</code>', e: 'BufferedReaderから1行読む。ファイル末尾では <code>null</code>。' },
+    { q: '<code>while ((line = br.readLine()) != ____)</code> の空欄は？', a: '<code>null</code>', e: '読める行がなくなったことを <code>null</code> で判定する。' },
+    { q: '<code>bw.____(name);</code> でファイルへ文字を書く。空欄は？', a: '<code>write</code>', e: 'BufferedWriterへ文字列を書き込む。' },
+    { q: '<code>bw.____();</code> で改行する。空欄は？', a: '<code>newLine</code>', e: 'ファイル出力で次の行へ移る。' },
+    { q: '<code>br.____();</code> で読み終えたファイルを閉じる。空欄は？', a: '<code>close</code>', e: 'Reader/Writerは使い終わったら閉じる。' },
+    { q: '<code>class Task implements ____</code> の空欄は？', a: '<code>Runnable</code>', e: '別スレッドで行う仕事を <code>run()</code> に書くための約束。' },
+    { q: '<code>public void ____()</code> にスレッドの仕事を書く。空欄は？', a: '<code>run</code>', e: '仕事の内容は <code>run()</code>。開始命令とは別。' },
+    { q: '<code>Thread t = new Thread(new ____());</code> の空欄は？', a: '<code>Task</code>（Runnableを実装したクラス）', e: 'Threadへ渡すのはRunnableの仕事。コード前後のクラス名に合わせる。' },
+    { q: '<code>t.____();</code> で別スレッドを始める。空欄は？', a: '<code>start</code>', e: '<code>run()</code> を直接呼ぶのでなく、<code>start()</code> で開始する。' },
+    { q: '<code>ServerSocket server = new ServerSocket(9999); Socket s = server.____();</code> の空欄は？', a: '<code>accept</code>', e: 'サーバーが接続を待ち、会話用Socketを受け取る。' },
+    { q: '<code>socket.____()</code> から受信側のストリームを得る。空欄は？', a: '<code>getInputStream</code>', e: '相手から受け取る向きはInput。' },
+    { q: '<code>socket.____()</code> から送信側のストリームを得る。空欄は？', a: '<code>getOutputStream</code>', e: '相手へ送る向きはOutput。' },
+    { q: '<code>out.____(message);</code> で相手へ1行送る。空欄は？', a: '<code>println</code>', e: '改行付きで送るので、相手の <code>readLine()</code> と組になる。' },
+    { q: '<code>InetAddress addr = InetAddress.____("localhost");</code> の空欄は？', a: '<code>getByName</code>', e: 'ホスト名から接続先のInetAddressを得る。' },
+    { q: '<code>new Socket(____, 9999)</code> の空欄は？', a: '<code>addr</code>（またはhost）', e: '直前で作った接続先アドレスの変数を渡す。' },
+    { q: '<code>public class S extends ____</code>（Servlet）の空欄は？', a: '<code>HttpServlet</code>', e: 'Servletは <code>HttpServlet</code> を継承する。' },
+    { q: '<code>protected void ____(HttpServletRequest request, HttpServletResponse response)</code> の空欄は？', a: '<code>doGet</code>', e: 'GETリクエストを受け取るServletのメソッド。' },
+    { q: '<code>request.____("name")</code> の空欄は？', a: '<code>getParameter</code>', e: 'フォームから送られた値を受け取る。' },
+    { q: '<code>response.____()</code> でブラウザへの出力先を得る。空欄は？', a: '<code>getWriter</code>', e: 'ResponseへHTMLなどの返事を書くためのPrintWriterを得る。' },
+    { q: 'JSPで値をHTMLへ表示するタグは <code>&lt;%____ name %&gt;</code>。空欄は？', a: '<code>=</code>', e: '式タグは <code>&lt;%= ... %&gt;</code>。値をそのままHTMLへ出力する。' },
+    { q: '<code>session.____("user", name);</code> の空欄は？', a: '<code>setAttribute</code>', e: '次のJSPでも使えるよう、sessionへ値を保存する。' }
+  ];
+  let currentQuizIndex = -1;
+  const quizMeta = document.getElementById('quizMeta');
+  const quizPrompt = document.getElementById('quizPrompt');
+  const quizAnswer = document.getElementById('quizAnswer');
+  const showQuizAnswer = document.getElementById('showQuizAnswer');
+  const nextQuiz = document.getElementById('nextQuiz');
+  function showNextQuiz() {
+    let nextIndex = Math.floor(Math.random() * quickQuizQuestions.length);
+    if (quickQuizQuestions.length > 1) {
+      while (nextIndex === currentQuizIndex) nextIndex = Math.floor(Math.random() * quickQuizQuestions.length);
+    }
+    currentQuizIndex = nextIndex;
+    const quiz = quickQuizQuestions[currentQuizIndex];
+    quizMeta.textContent = 'ランダム出題 · 全' + quickQuizQuestions.length + '問';
+    quizPrompt.innerHTML = quiz.q;
+    quizAnswer.innerHTML = '<b>答え:</b> ' + quiz.a + '<br><span>解説: ' + quiz.e + '</span>';
+    quizAnswer.hidden = true;
+    showQuizAnswer.setAttribute('aria-expanded', 'false');
+    showQuizAnswer.textContent = '答えと解説を表示';
+  }
+  showQuizAnswer.addEventListener('click', () => {
+    const isHidden = quizAnswer.hidden;
+    quizAnswer.hidden = !isHidden;
+    showQuizAnswer.setAttribute('aria-expanded', String(isHidden));
+    showQuizAnswer.textContent = isHidden ? '答えと解説を隠す' : '答えと解説を表示';
+  });
+  nextQuiz.addEventListener('click', showNextQuiz);
+  showNextQuiz();
 
   const boxes = [...document.querySelectorAll('[data-progress]')];
   const progressText = document.getElementById('progressText');
