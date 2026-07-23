@@ -930,11 +930,18 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
   let currentQuizIndex = -1;
   let favoriteOnly = false;
   const favoriteStorageKey = 'java3-quick-quiz-favorites';
+  const recentQuizStorageKey = 'java3-quick-quiz-recent';
   let quizFavorites;
+  let recentQuizKeys;
   try {
     quizFavorites = new Set(JSON.parse(localStorage.getItem(favoriteStorageKey) || '[]'));
   } catch {
     quizFavorites = new Set();
+  }
+  try {
+    recentQuizKeys = JSON.parse(localStorage.getItem(recentQuizStorageKey) || '[]').slice(-15);
+  } catch {
+    recentQuizKeys = [];
   }
   const quizMeta = document.getElementById('quizMeta');
   const quizPrompt = document.getElementById('quizPrompt');
@@ -961,17 +968,27 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
     toggleFavoriteFilter.setAttribute('aria-pressed', String(favoriteOnly));
     toggleFavoriteFilter.textContent = favoriteOnly ? '★ 星付きだけ表示中' : '★ 星付きだけ出す';
     quizNote.textContent = favoriteOnly
-      ? '星付き ' + favoriteCount + '問からランダム出題中'
-      : '星付き: ' + favoriteCount + '問（☆を押すと保存）';
+      ? '星付き ' + favoriteCount + '問から出題中（直近15問を除外）'
+      : '星付き: ' + favoriteCount + '問（☆を押すと保存）・直近' + recentQuizKeys.length + '問を除外中';
   }
   function eligibleQuizIndexes() {
     const all = quickQuizQuestions.map((_, index) => index);
-    return favoriteOnly ? all.filter(isQuizFavorite) : all;
+    return all.filter(index => (!favoriteOnly || isQuizFavorite(index)) && !recentQuizKeys.includes(quickQuizQuestions[index].q));
+  }
+  function saveRecentQuiz(question) {
+    recentQuizKeys.push(question.q);
+    recentQuizKeys = recentQuizKeys.slice(-15);
+    localStorage.setItem(recentQuizStorageKey, JSON.stringify(recentQuizKeys));
   }
   function showNextQuiz() {
     let candidates = eligibleQuizIndexes();
     if (candidates.length === 0) {
-      favoriteOnly = false;
+      if (favoriteOnly) {
+        quizNote.textContent = '星付き問題のうち、直近15問以外に出題できる問題がありません。星付き問題を増やしてください。';
+        return;
+      }
+      recentQuizKeys = [];
+      localStorage.setItem(recentQuizStorageKey, JSON.stringify(recentQuizKeys));
       candidates = eligibleQuizIndexes();
     }
     let nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
@@ -980,12 +997,13 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
     }
     currentQuizIndex = nextIndex;
     const quiz = quickQuizQuestions[currentQuizIndex];
-    quizMeta.textContent = 'ランダム出題 · 全' + quickQuizQuestions.length + '問';
+    quizMeta.textContent = 'ランダム出題 · 全' + quickQuizQuestions.length + '問 · 直近15問を除外';
     quizPrompt.innerHTML = quiz.q;
     quizAnswer.innerHTML = '<b>答え:</b> ' + quiz.a + '<br><span>解説: ' + quiz.e + '</span>';
     quizAnswer.hidden = true;
     showQuizAnswer.setAttribute('aria-expanded', 'false');
     showQuizAnswer.textContent = '答えと解説を表示';
+    saveRecentQuiz(quiz);
     updateQuizControls();
   }
   showQuizAnswer.addEventListener('click', () => {
