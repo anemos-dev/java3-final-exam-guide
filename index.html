@@ -898,7 +898,27 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
     { q: '<code>request.____("name")</code> の空欄は？', a: '<code>getParameter</code>', e: 'フォームから送られた値を受け取る。' },
     { q: '<code>response.____()</code> でブラウザへの出力先を得る。空欄は？', a: '<code>getWriter</code>', e: 'ResponseへHTMLなどの返事を書くためのPrintWriterを得る。' },
     { q: 'JSPで値をHTMLへ表示するタグは <code>&lt;%____ name %&gt;</code>。空欄は？', a: '<code>=</code>', e: '式タグは <code>&lt;%= ... %&gt;</code>。値をそのままHTMLへ出力する。' },
-    { q: '<code>session.____("user", name);</code> の空欄は？', a: '<code>setAttribute</code>', e: '次のJSPでも使えるよう、sessionへ値を保存する。' }
+    { q: '<code>session.____("user", name);</code> の空欄は？', a: '<code>setAttribute</code>', e: '次のJSPでも使えるよう、sessionへ値を保存する。' },
+    { q: '<code>session.____("user")</code> で保存済みの値を取り出す。空欄は？', a: '<code>getAttribute</code>', e: 'sessionから取り出すときは <code>getAttribute</code>。Stringとして使う場合はキャストする。' },
+    { q: '<code>String name = (String) session.getAttribute("user");</code> の <code>(String)</code> は何？', a: 'キャスト', e: '<code>getAttribute</code> の戻り値はObjectなので、Stringとして使うことを明示する。' },
+    { q: 'JSPでJavaの文を書くタグは <code>&lt;____ Java文 %&gt;</code>。空欄は？', a: '<code>%</code>（全体で <code>&lt;% ... %&gt;</code>）', e: '<code>&lt;% ... %&gt;</code> はscriptlet。値を表示する式タグとは区別する。' },
+    { q: 'JSPで変数・メソッドを宣言するタグは <code>&lt;%____ ... %&gt;</code>。空欄は？', a: '<code>!</code>', e: '<code>&lt;%! ... %&gt;</code> はdeclarationタグ。' },
+    { q: 'JSPのページ設定を書くタグは <code>&lt;%____ page ... %&gt;</code>。空欄は？', a: '<code>@</code>', e: '<code>&lt;%@ ... %&gt;</code> はdirectiveタグ。contentTypeなどを指定する。' },
+    { q: 'HTMLフォームで送信先を指定する属性は <code>____="QuestionnaireResult.jsp"</code>。空欄は？', a: '<code>action</code>', e: '<code>action</code> はフォームを送る先のページ・Servletを指定する。' },
+    { q: 'HTMLフォームで送信方法を指定する属性は <code>____="post"</code>。空欄は？', a: '<code>method</code>', e: '<code>method</code> に <code>get</code> または <code>post</code> を指定する。' },
+    { q: '<code>&lt;input type="text" ____="user"&gt;</code> の空欄は？', a: '<code>name</code>', e: 'この名前をServlet/JSP側で <code>request.getParameter("user")</code> と指定する。' },
+    { q: '<code>MenuBar mb</code> に <code>Menu menu</code> を追加する式は？', a: '<code>mb.getMenus().add(menu)</code>', e: 'MenuBarがメニューを入れる箱で、<code>getMenus()</code> を通して追加する。' },
+    { q: '<code>Menu menu</code> に <code>MenuItem item</code> を追加する式は？', a: '<code>menu.getItems().add(item)</code>', e: 'Menuの中の項目は <code>getItems()</code> に追加する。' },
+    { q: '<code>item.____(new MenuHandler());</code> でメニュー選択の処理を登録する。空欄は？', a: '<code>setOnAction</code>', e: 'MenuItemもButtonやTextFieldと同様にActionイベントを登録できる。' },
+    { q: '<code>new Alert(Alert.AlertType.____)</code> で警告ダイアログを作る。空欄は？', a: '<code>WARNING</code>', e: '入力漏れなどを知らせる警告は <code>AlertType.WARNING</code>。' },
+    { q: '<code>alert.____();</code> でダイアログを表示する。空欄は？', a: '<code>showAndWait</code>', e: 'ユーザーが閉じるまで待つ表示メソッド。' },
+    { q: '<code>bar.setProgress(i / ____);</code> で0〜100を0〜1へ直す。空欄は？', a: '<code>100.0</code>', e: '小数にするため <code>100.0</code>。<code>100</code> だと整数除算になる。' },
+    { q: '<code>new Thread(new ClientHandler(socket)).____();</code> の空欄は？', a: '<code>start</code>', e: '接続ごとの処理を別スレッドで開始し、サーバーは次のacceptへ戻る。' },
+    { q: '<code>new InputStreamReader(socket.getInputStream())</code> の役割は？', a: 'バイト入力を文字入力へ変換する', e: 'SocketのInputStreamを文字として <code>BufferedReader</code> で読める形にする。' },
+    { q: '<code>new OutputStreamWriter(socket.getOutputStream())</code> の役割は？', a: '文字出力をバイト出力へ変換する', e: 'PrintWriterなどで書く文字をSocketへ送れる形にする。' },
+    { q: '<code>new PrintWriter(writer, ____)</code> の第2引数を <code>true</code> にする意味は？', a: 'auto-flushを有効にする', e: '<code>println</code> のたびに送信内容を出力先へ流しやすくする。' },
+    { q: '<code>ServerSocket</code> と <code>Socket</code> のうち、接続待ち専用なのは？', a: '<code>ServerSocket</code>', e: '<code>ServerSocket</code> は受付、<code>accept()</code> 後の <code>Socket</code> が会話用。' },
+    { q: '<code>FileWriter(file, true)</code> の <code>true</code> は何を意味する？', a: '追記（append）モード', e: '既存の内容を消さず、ファイル末尾へ続けて書く。' }
   ];
   let currentQuizIndex = -1;
   const quizMeta = document.getElementById('quizMeta');
