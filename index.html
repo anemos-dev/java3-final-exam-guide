@@ -111,6 +111,10 @@
     .quiz-btn { min-height: 46px; padding: 10px 16px; border: 1px solid var(--blue); border-radius: 8px; color: #fff; background: var(--blue); cursor: pointer; font-weight: 900; }
     .quiz-btn:hover { background: #0f4fab; }
     .quiz-btn.secondary { color: var(--blue); background: #fff; }
+    .quiz-btn.star { min-width: 52px; color: #9a6700; border-color: #e6bd5b; background: #fffaf0; font-size: 20px; line-height: 1; }
+    .quiz-btn.star.is-favorite { color: #fff; border-color: #d99800; background: #d99800; }
+    .quiz-btn.filter-active { color: #fff; border-color: #9a6700; background: #9a6700; }
+    .quiz-note { min-height: 1.75em; margin: 10px 0 0; color: var(--muted); font-size: 13px; font-weight: 700; }
     .quiz-answer { margin-top: 18px; padding: 16px; border-left: 4px solid var(--green); border-radius: 0 9px 9px 0; background: var(--green-soft); }
     .quiz-answer[hidden] { display: none; }
     .quiz-answer b { color: #12663a; }
@@ -724,9 +728,12 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
         <div class="quiz-meta" id="quizMeta">40問からランダム出題</div>
         <div class="quiz-prompt" id="quizPrompt"></div>
         <div class="quiz-actions">
+          <button class="quiz-btn star" id="toggleQuizFavorite" type="button" aria-label="この問題に星を付ける" aria-pressed="false">☆</button>
           <button class="quiz-btn" id="showQuizAnswer" type="button" aria-expanded="false" aria-controls="quizAnswer">答えと解説を表示</button>
           <button class="quiz-btn secondary" id="nextQuiz" type="button">次のクイズへ</button>
+          <button class="quiz-btn secondary" id="toggleFavoriteFilter" type="button" aria-pressed="false">★ 星付きだけ出す</button>
         </div>
+        <p class="quiz-note" id="quizNote"></p>
         <div class="quiz-answer" id="quizAnswer" hidden></div>
       </div>
     </section>
@@ -921,15 +928,55 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
     { q: '<code>FileWriter(file, true)</code> の <code>true</code> は何を意味する？', a: '追記（append）モード', e: '既存の内容を消さず、ファイル末尾へ続けて書く。' }
   ];
   let currentQuizIndex = -1;
+  let favoriteOnly = false;
+  const favoriteStorageKey = 'java3-quick-quiz-favorites';
+  let quizFavorites;
+  try {
+    quizFavorites = new Set(JSON.parse(localStorage.getItem(favoriteStorageKey) || '[]'));
+  } catch {
+    quizFavorites = new Set();
+  }
   const quizMeta = document.getElementById('quizMeta');
   const quizPrompt = document.getElementById('quizPrompt');
   const quizAnswer = document.getElementById('quizAnswer');
   const showQuizAnswer = document.getElementById('showQuizAnswer');
   const nextQuiz = document.getElementById('nextQuiz');
+  const toggleQuizFavorite = document.getElementById('toggleQuizFavorite');
+  const toggleFavoriteFilter = document.getElementById('toggleFavoriteFilter');
+  const quizNote = document.getElementById('quizNote');
+  function isQuizFavorite(index) {
+    return quizFavorites.has(quickQuizQuestions[index].q);
+  }
+  function saveQuizFavorites() {
+    localStorage.setItem(favoriteStorageKey, JSON.stringify([...quizFavorites]));
+  }
+  function updateQuizControls() {
+    const favoriteCount = quizFavorites.size;
+    const currentIsFavorite = currentQuizIndex >= 0 && isQuizFavorite(currentQuizIndex);
+    toggleQuizFavorite.classList.toggle('is-favorite', currentIsFavorite);
+    toggleQuizFavorite.textContent = currentIsFavorite ? '★' : '☆';
+    toggleQuizFavorite.setAttribute('aria-pressed', String(currentIsFavorite));
+    toggleQuizFavorite.setAttribute('aria-label', currentIsFavorite ? 'この問題の星を外す' : 'この問題に星を付ける');
+    toggleFavoriteFilter.classList.toggle('filter-active', favoriteOnly);
+    toggleFavoriteFilter.setAttribute('aria-pressed', String(favoriteOnly));
+    toggleFavoriteFilter.textContent = favoriteOnly ? '★ 星付きだけ表示中' : '★ 星付きだけ出す';
+    quizNote.textContent = favoriteOnly
+      ? '星付き ' + favoriteCount + '問からランダム出題中'
+      : '星付き: ' + favoriteCount + '問（☆を押すと保存）';
+  }
+  function eligibleQuizIndexes() {
+    const all = quickQuizQuestions.map((_, index) => index);
+    return favoriteOnly ? all.filter(isQuizFavorite) : all;
+  }
   function showNextQuiz() {
-    let nextIndex = Math.floor(Math.random() * quickQuizQuestions.length);
-    if (quickQuizQuestions.length > 1) {
-      while (nextIndex === currentQuizIndex) nextIndex = Math.floor(Math.random() * quickQuizQuestions.length);
+    let candidates = eligibleQuizIndexes();
+    if (candidates.length === 0) {
+      favoriteOnly = false;
+      candidates = eligibleQuizIndexes();
+    }
+    let nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
+    if (candidates.length > 1) {
+      while (nextIndex === currentQuizIndex) nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
     }
     currentQuizIndex = nextIndex;
     const quiz = quickQuizQuestions[currentQuizIndex];
@@ -939,12 +986,29 @@ bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>
     quizAnswer.hidden = true;
     showQuizAnswer.setAttribute('aria-expanded', 'false');
     showQuizAnswer.textContent = '答えと解説を表示';
+    updateQuizControls();
   }
   showQuizAnswer.addEventListener('click', () => {
     const isHidden = quizAnswer.hidden;
     quizAnswer.hidden = !isHidden;
     showQuizAnswer.setAttribute('aria-expanded', String(isHidden));
     showQuizAnswer.textContent = isHidden ? '答えと解説を隠す' : '答えと解説を表示';
+  });
+  toggleQuizFavorite.addEventListener('click', () => {
+    const key = quickQuizQuestions[currentQuizIndex].q;
+    if (quizFavorites.has(key)) quizFavorites.delete(key);
+    else quizFavorites.add(key);
+    saveQuizFavorites();
+    if (favoriteOnly && !quizFavorites.has(key)) showNextQuiz();
+    else updateQuizControls();
+  });
+  toggleFavoriteFilter.addEventListener('click', () => {
+    if (!favoriteOnly && quizFavorites.size === 0) {
+      quizNote.textContent = 'まだ星付き問題がありません。先に ☆ を押して問題を保存してください。';
+      return;
+    }
+    favoriteOnly = !favoriteOnly;
+    showNextQuiz();
   });
   nextQuiz.addEventListener('click', showNextQuiz);
   showNextQuiz();
