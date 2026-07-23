@@ -654,6 +654,54 @@ out.<span class="blank">③</span>(message);
       <div class="question"><div class="qhead"><b>予想12：WebView</b><span class="points">重要度 B</span></div><div class="code-wrap"><pre><span class="type">WebView</span> browser = <span class="kw">new</span> <span class="type">WebView</span>();
 <span class="type">WebEngine</span> engine = browser.<span class="blank">①</span>();
 engine.<span class="blank">②</span>(<span class="str">"https://www.hosei.ac.jp"</span>);</pre></div><details><summary>解答</summary><div>① <code>getEngine</code> ② <code>load</code>。</div></details></div>
+      <div class="callout danger"><b>画像から追加した「2〜3行穴埋め」演習</b><br>画像の重要大型プログラム（p.62〜70）に合わせ、空欄が1語だけではなく、まとまった2〜3行になる問題を追加。空欄の前後だけでなく、<b>画面の完成形・データの流れ・部品を置く順番</b>から復元する練習をする。</div>
+
+      <div class="question"><div class="qhead"><b>予想13：JavaFX 部品を横並びにして配置（2行）</b><span class="points">重要度 S+</span></div><p>「入力欄と Male チェックを横並びにし、その列を画面の下に置く」ための空欄。</p><div class="code-wrap"><pre><span class="type">HBox</span> hb = <span class="kw">new</span> <span class="type">HBox</span>();
+<span class="type">BorderPane</span> bp = <span class="kw">new</span> <span class="type">BorderPane</span>();
+<span class="blank">① 2行</span>
+<span class="type">Scene</span> scene = <span class="kw">new</span> <span class="type">Scene</span>(bp, <span class="num">400</span>, <span class="num">180</span>);</pre></div><details><summary>解答と考え方</summary><div><code>hb.getChildren().addAll(tf, ck);</code><br><code>bp.setBottom(hb);</code><br>最初の行は部品をHBoxへ入れる。次の行は、そのHBoxをBorderPaneの下（Bottom）へ置く。授業写真のHelloTestと同じ「部品を作る → HBoxへ入れる → BorderPaneへ置く」順番。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想14：JavaFX メニューを画面上部へ置く（2行）</b><span class="points">重要度 A</span></div><p>RandNumMenu_FX のように、メニューバーを作って画面の上部へ配置する場面。</p><div class="code-wrap"><pre><span class="type">MenuBar</span> mb = <span class="kw">new</span> <span class="type">MenuBar</span>();
+<span class="type">Menu</span> menu = <span class="kw">new</span> <span class="type">Menu</span>(<span class="str">"File"</span>);
+<span class="blank">① 2行</span>
+<span class="type">BorderPane</span> root = <span class="kw">new</span> <span class="type">BorderPane</span>();</pre></div><details><summary>解答と考え方</summary><div><code>mb.getMenus().add(menu);</code><br><code>root.setTop(mb);</code><br><code>Menu</code> を <code>MenuBar</code> に入れ、そのバーをBorderPaneの上（Top）に置く。<code>getMenus()</code> はメニューの入れ物、<code>setTop</code> は上部配置。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想15：入力が空なら警告、空でなければ確認（3行）</b><span class="points">重要度 S</span></div><p>RegisterConfirm_FX のように、TextFieldの入力を検査して表示を切り替える場面。</p><div class="code-wrap"><pre><span class="type">String</span> name = tf.getText();
+<span class="kw">if</span> (name.isEmpty()) {
+  <span class="blank">① 1行</span>
+} <span class="kw">else</span> {
+  <span class="blank">② 2行</span>
+}</pre></div><details><summary>解答例と考え方</summary><div>① <code>lb.setText("名前を入力してください");</code><br>② <code>lb.setText("登録内容: " + name);</code><br><code>ck.setSelected(false);</code><br>空欄は表示部品 <code>lb</code> の文字変更と、別の部品の状態変更で構成される。実際の表示文言は問題文・完成画面に合わせて変える。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想16：ファイルへ複数項目を書き出す（2行）</b><span class="points">重要度 S</span></div><p>GenerateInfo.java を想定。姓名などの情報を1行ずつファイルへ保存する場面。</p><div class="code-wrap"><pre><span class="type">BufferedWriter</span> bw = <span class="kw">new</span> <span class="type">BufferedWriter</span>(<span class="kw">new</span> <span class="type">FileWriter</span>(file));
+<span class="blank">① 2行</span>
+bw.close();</pre></div><details><summary>解答と考え方</summary><div><code>bw.write(name);</code><br><code>bw.newLine();</code><br><code>write</code> が文字を書く命令、<code>newLine</code> が改行を書く命令。2項目ならこの2行を繰り返す。最後の <code>close()</code> は必ず残す。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想17：スレッドで進捗表示を更新（2行）</b><span class="points">重要度 A</span></div><p>ProgressThreadFX.java のように、0から100まで進めながら表示を更新する骨格。</p><div class="code-wrap"><pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt;= <span class="num">100</span>; i++) {
+  <span class="blank">① 2行</span>
+  Thread.sleep(<span class="num">100</span>);
+}</pre></div><details><summary>解答例と考え方</summary><div><code>bar.setProgress(i / 100.0);</code><br><code>label.setText(i + "%");</code><br>進捗バーには0〜1の小数を渡すため、<code>i / 100.0</code> とする。<code>100</code> だけだと整数計算になり、途中が0になってしまう点に注意。</div></details></div>
+      <div class="question"><div class="qhead"><b>予想18：FTP/ソケットでファイル名を受け取る（3行）</b><span class="points">重要度 S+</span></div><p>FTPServer.java / FTPClient.java の基本形。接続済みSocketから、相手が送ったファイル名を読む。</p><div class="code-wrap"><pre><span class="type">Socket</span> socket = server.accept();
+<span class="blank">① 3行</span>
+<span class="type">String</span> fileName = in.readLine();</pre></div><details><summary>解答と考え方</summary><div><code>BufferedReader in = new BufferedReader(</code><br><code>    new InputStreamReader(</code><br><code>        socket.getInputStream()));</code><br>Socketの「入力」を文字として読むため、内側から <code>getInputStream</code> → <code>InputStreamReader</code> → <code>BufferedReader</code> と包む。最後の <code>readLine()</code> と組になる。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想19：チャットの接続を別スレッドへ渡す（2行）</b><span class="points">重要度 S+</span></div><p>ChatServer.java のように、次の利用者を待てるよう、接続ごとの処理を別スレッドで始める。</p><div class="code-wrap"><pre><span class="type">Socket</span> socket = server.accept();
+<span class="blank">① 2行</span>
+<span class="cm">// すぐ次の accept() に戻る</span></pre></div><details><summary>解答と考え方</summary><div><code>Thread worker = new Thread(new ClientHandler(socket));</code><br><code>worker.start();</code><br><code>ClientHandler</code> に今つながった <code>socket</code> を渡してから開始する。<code>run()</code> ではなく <code>start()</code> にすることで、サーバー本体は次の接続を待てる。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想20：JSP アンケート入力フォーム（3行）</b><span class="points">重要度 A</span></div><p>QuestionnaireInput.jsp を想定。入力値を次のJSPへ送るフォームの重要部分。</p><div class="code-wrap"><pre>&lt;form <span class="blank">①</span>=<span class="str">"QuestionnaireResult.jsp"</span> <span class="blank">②</span>=<span class="str">"post"</span>&gt;
+  名前: &lt;input <span class="blank">③</span>=<span class="str">"text"</span> name=<span class="str">"user"</span>&gt;
+  &lt;input type=<span class="str">"submit"</span> value=<span class="str">"送信"</span>&gt;
+&lt;/form&gt;</pre></div><details><summary>解答と考え方</summary><div>① <code>action</code> ② <code>method</code> ③ <code>type</code>。<code>action</code> は送り先、<code>method</code> は送信方法、inputの <code>name="user"</code> は受け取り側で <code>request.getParameter("user")</code> と対応する名前。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想21：JSP 受け取った値を表示してsessionへ保存（2行）</b><span class="points">重要度 S</span></div><p>QuestionnaireResult.jsp を想定。送られた名前を受け取り、次の画面でも使えるようにする。</p><div class="code-wrap"><pre>&lt;%
+  <span class="blank">① 2行</span>
+%&gt;
+&lt;p&gt;こんにちは、&lt;%= name %&gt;さん&lt;/p&gt;</pre></div><details><summary>解答と考え方</summary><div><code>String name = request.getParameter("user");</code><br><code>session.setAttribute("user", name);</code><br>フォームの <code>name="user"</code> と同じ文字列で受け取る。<code>session</code> に入れると、別のJSPでも <code>session.getAttribute("user")</code> で取り出せる。</div></details></div>
+
+      <div class="question"><div class="qhead"><b>予想22：JSP 編集画面でsessionの値を使う（2行）</b><span class="points">重要度 A</span></div><p>QuestionnaireEdit.jsp を想定。前ページで保存したユーザー名を取り出し、inputの初期値へ入れる。</p><div class="code-wrap"><pre>&lt;% <span class="blank">① 1行</span> %&gt;
+名前: &lt;input type=<span class="str">"text"</span> name=<span class="str">"user"</span>
+       value=<span class="blank">② 1行</span>&gt;</pre></div><details><summary>解答と考え方</summary><div>① <code>String name = (String) session.getAttribute("user");</code><br>② <code>"&lt;%= name %&gt;"</code><br><code>getAttribute</code> の戻り値は <code>Object</code> なので、Stringとして使うには <code>(String)</code> を付ける。JSPの <code>&lt;%= ... %&gt;</code> は値をHTMLへ表示する式タグ。</div></details></div>
     </section>
 
     <section id="mock" data-search>
